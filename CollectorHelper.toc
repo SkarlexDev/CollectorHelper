@@ -1,0 +1,9 @@
+## Interface: 100207
+
+## Title: CollectorHelper
+## Author: Skarlex
+## Version: 1.0
+## Notes: Hide vendor collected items
+## IconTexture: 3994716
+
+CollectorHelper.lua
