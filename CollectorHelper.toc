@@ -2,9 +2,12 @@
 
 ## Title: CollectorHelper
 ## Author: Skarlex
-## Version: 1.0
+## Version: 1.1
 ## Notes: Hide vendor collected items
 ## IconTexture: 3994716
 ## SavedVariables: settings
 
+core/classes.lua
+core/globals.lua
+core/utils.lua
 CollectorHelper.lua
