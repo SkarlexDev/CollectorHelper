@@ -1,6 +1,6 @@
 local itemIndexMap = {}
 local forceShowMerchant = false
-
+local merchantIndex = {}
 
 SLASH_COLLECTORHELPER1 = "/ch"
 SlashCmdList["COLLECTORHELPER"] = function()
@@ -8,7 +8,9 @@ SlashCmdList["COLLECTORHELPER"] = function()
   updateShop()
 end
 
--- init merchantFrame
+-- ========================
+-- Section: Merchant Frame build
+-- ========================
 local merchantFrameCost = frameBuilder({
   frameName = "CollectorHelper_MerchantButton",
   parent = MerchantFrame,
@@ -18,18 +20,27 @@ local merchantFrameCost = frameBuilder({
     pos = "TOPRIGHT",
     x = 280,
     y = 0,
+  },
+  titleBuilder = {
+    text = textCFormat(COLORS.yellow, "Currency Needed to Collect this page"),
+    point = {
+      pos = "TOP",
+      x = 0,
+      y = -8,
+    }
   }
 })
 
-
--- frame title
-local merchantCostTitle = merchantFrameCost:CreateFontString(nil, "OVERLAY", "GameTooltipText")
-merchantCostTitle:SetPoint("TOP",0,-8)
-merchantCostTitle:SetText(textCFormat(COLORS.yellow, "Currency Needed to Collect this page"))
-
--- frame details
-local marchantCost = merchantFrameCost:CreateFontString(nil, "OVERLAY", "GameTooltipText")
-marchantCost:SetPoint("TOPLEFT",35,-40)
+-- cost details
+local marchantCost = fontBuilder({
+  parent = merchantFrameCost,
+  text = "",
+  point = {
+    pos = "TOPLEFT",
+    x = 35,
+    y = -40,
+  }
+})
 
 local m1s = buttonBuilder({
   buttonName = "Collector_MBuyButton",
@@ -39,7 +50,7 @@ local m1s = buttonBuilder({
   height = 22,
   point = {
     pos = "BOTTOMLEFT",
-    x = 20,
+    x = 18,
     y = 8,
   }
 })
@@ -55,7 +66,6 @@ m1s:HookScript("OnClick", function(self, button)
   end
 end)
 
-
 local m2s = buttonBuilder({
   buttonName = "Collector_MSHButton",
   parent = merchantFrameCost,
@@ -64,7 +74,7 @@ local m2s = buttonBuilder({
   height = 22,
   point = {
     pos = "BOTTOMRIGHT",
-    x = -20,
+    x = -18,
     y = 8,
   }
 })
@@ -80,82 +90,129 @@ m2s:HookScript("OnClick", function(self, button)
 end)
 
 
--- addon logic
--- check Miscellaneous (toys/mounts/pets)
-local function checkMiscellaneousOwned(itemId)
-  local isToy = C_ToyBox.GetToyInfo(itemId) ~= nil
-  if isToy then
-    return PlayerHasToy(itemId) and 1 or 0
+-- ========================
+-- Section: Item owned logic
+-- ========================
+local function isToyItem(itemId)
+  if C_ToyBox.GetToyInfo(itemId) then
+    return true
   end
+  return false
+end
 
-  local mountId = C_MountJournal.GetMountFromItem(itemId)
-  if mountId ~= nil then
-    local _,_,_,_,_,_,_,_,_,_,isCollected = C_MountJournal.GetMountInfoByID(mountId)
-    return isCollected and 1 or 0
+local function IsMountItem(itemId)
+  if C_MountJournal.GetMountFromItem(itemId) then
+    return true
   end
+  return false
+end
 
-  local petName = C_PetJournal.GetPetInfoByItemID(itemId)
-  if petName ~= nil then
-    local _,petGUID = C_PetJournal.FindPetIDByName(petName)
-    return petGUID ~= nil and 1 or 0
+local function IsPetItem(itemId)
+  if C_PetJournal.GetPetInfoByItemID(itemId) then
+    return true
   end
-  return 2 -- ignore
+  return false
 end
 
 -- check set owned
 local function setOwned(itemSet)
   local ids = C_TransmogSets.GetAllSourceIDs(itemSet)
-  for _,sourceID in ipairs(ids) do
+  for _, sourceID in ipairs(ids) do
     local info = C_TransmogCollection.GetSourceInfo(sourceID)
     if not info.isCollected then return false end
   end
   return true
 end
 
-
 -- check item owned from merchant
-local function checkShopID(itemId, itemType, itemEquipLoc)
+local function checkShopID(source)
   -- 0 false, 1 true, 2 ignore
-  if itemId == nil then
+  if source == nil or source.itemId == nil then
     return 0
   end
 
-  local itemSetId = C_Item.GetItemLearnTransmogSet(itemId)
-  local isItemHeirloom = C_Heirloom.IsItemHeirloom(itemId)
-  if (itemType == "Miscellaneous" or itemType == "Consumable") and itemSetId == nil then
-    return checkMiscellaneousOwned(itemId)
-  elseif itemSetId ~= nil then
+  local isToy = isToyItem(source.itemId)
+  if isToy then
+    return PlayerHasToy(source.itemId) and 1 or 0
+  end
+
+  local isMount = IsMountItem(source.itemId)
+  if isMount then
+    local mountID = C_MountJournal.GetMountFromItem(source.itemId)
+    local playerKnowsMount = select(11, C_MountJournal.GetMountInfoByID(mountID))
+    return playerKnowsMount and 1 or 0
+  end
+
+  local IsPet = IsPetItem(source.itemId)
+  if IsPet then
+    local petName = C_PetJournal.GetPetInfoByItemID(source.itemId)
+    if petName ~= nil then
+      local _, petGUID = C_PetJournal.FindPetIDByName(petName)
+      return petGUID ~= nil and 1 or 0
+    end
+  end
+
+  local itemSetId = C_Item.GetItemLearnTransmogSet(source.itemId)
+  local isItemHeirloom = C_Heirloom.IsItemHeirloom(source.itemId)
+  if itemSetId ~= nil then
     return setOwned(itemSetId) and 1 or 0
   elseif isItemHeirloom then
-    return C_Heirloom.PlayerHasHeirloom(itemId) and 1 or 0
+    return C_Heirloom.PlayerHasHeirloom(source.itemId) and 1 or 0
   else
-    local itemAppearanceID,_ = C_TransmogCollection.GetItemInfo(itemId)
+    local itemAppearanceID, _ = C_TransmogCollection.GetItemInfo(source.itemId)
     if itemAppearanceID == nil then
-      local isValid = extensiveTypeisValid(itemEquipLoc)
-      if isValid == true then
-        return C_TransmogCollection.PlayerHasTransmog(itemId) and 1 or 0
+      local sourceID = GetSourceID(source.link)
+      if sourceID ~= nil then
+        return C_TransmogCollection.PlayerHasTransmogItemModifiedAppearance(sourceID) and 1 or 0
       else
-        return 2  -- ignore item
+        return 2 -- ignore item
       end
     else
-      return C_TransmogCollection.PlayerHasTransmog(itemId) and 1 or 0
+      local r = C_TransmogCollection.PlayerHasTransmog(source.itemId) and 1 or 0
+      if r == 0 and source.bindType == 2 then
+        if playerHasItemInBag(source.itemId) == true then
+          return 10
+        end
+      end
+      return r
     end
   end
 end
 
--- merchant logic
+function playerHasItemInBag(itemCheckId)
+  -- check if item is in bag
+  for bag = 0, NUM_BAG_SLOTS do
+    for slot = 1, C_Container.GetContainerNumSlots(bag) do
+      local item = C_Container.GetContainerItemInfo(bag, slot)
+      if (item ~= nil and item.itemID == itemCheckId) then
+        return true
+      end
+    end
+  end
+  return false
+end
+
+-- ========================
+-- Section: Merchant items
+-- ========================
 function updateShop()
   local itemData = {}
   local size = MERCHANT_ITEMS_PER_PAGE
   local currencyMap = {}
   local initialItemIndexMap = {}
+  merchantIndex = {}
 
   for i = 1, size do
     local itemIndex = (MerchantFrame.page - 1) * size + i
     local itemId = GetMerchantItemID(itemIndex)
     if itemId ~= nil then
-      local name, _, _, _, _, itemType, _, _, itemEquipLoc, _, _, _ = C_Item.GetItemInfo(itemId)
-      local shopItemState = checkShopID(itemId, itemType, itemEquipLoc)
+      merchantIndex[i] = itemId
+      local source = getItemDetails(itemId)
+      local shopItemState = checkShopID(source)
+      local equipBtn = _G["MerchantItem" .. i .. "EquipBtn"]
+      if equipBtn ~= nil then
+        equipBtn:Hide()
+      end
       if shopItemState == 1 then
         if settings.hideMerchantOwned then
           SetItemButtonSlotVertexColor(_G["MerchantItem" .. i], 0.4, 0.4, 0.4)
@@ -167,7 +224,7 @@ function updateShop()
           local currencyIndex = GetMerchantItemCostInfo(itemIndex)
           SetItemButtonSlotVertexColor(_G["MerchantItem" .. i], 1, 1, 1)
           _G["MerchantItem" .. i .. "ItemButton"]:Show()
-          _G["MerchantItem" .. i .. "Name"]:SetText(name)
+          _G["MerchantItem" .. i .. "Name"]:SetText(source.name)
           if currencyIndex == 0 then
             _G["MerchantItem" .. i .. "MoneyFrame"]:Show()
           else
@@ -178,7 +235,7 @@ function updateShop()
         local currencyIndex = GetMerchantItemCostInfo(itemIndex)
         if currencyIndex == 0 then
           -- is gold
-          local _,_,price,_,_,_,_,_ = GetMerchantItemInfo(itemIndex)
+          local _, _, price, _, _, _, _, _ = GetMerchantItemInfo(itemIndex)
           local itemTexture = "MoneyCurrency"
           if itemTexture then
             if currencyMap[itemTexture] then
@@ -191,7 +248,7 @@ function updateShop()
           end
         else
           for y = 1, currencyIndex do
-            local itemTexture, itemValue,link,_ = GetMerchantItemCostItem(itemIndex, y)
+            local itemTexture, itemValue, link, _ = GetMerchantItemCostItem(itemIndex, y)
             if itemTexture then
               if currencyMap[itemTexture] then
                 currencyMap[itemTexture] = currencyMap[itemTexture] + itemValue
@@ -199,7 +256,7 @@ function updateShop()
                 currencyMap[itemTexture] = itemValue
               end
               local ci = C_CurrencyInfo.GetCurrencyInfoFromLink(link)
-              if ci ~=nil then
+              if ci ~= nil then
                 itemData[itemTexture] = ci.quantity
               else
                 local count = C_Item.GetItemCount(link)
@@ -209,6 +266,17 @@ function updateShop()
           end
         end
         initialItemIndexMap[itemIndex] = itemId
+      elseif shopItemState == 10 then
+        -- item is in bag should equip to learn
+        _G["MerchantItem" .. i .. "Name"]:SetText("This item is in your bag")
+        _G["MerchantItem" .. i .. "AltCurrencyFrame"]:Hide()
+        _G["MerchantItem" .. i .. "MoneyFrame"]:Hide()
+        local eqBtn = _G["MerchantItem" .. i .. "EquipBtn"]
+        if eqBtn == nil then
+          merchantEquipHandler(i)
+        else
+          eqBtn:Show()
+        end
       else
         -- (ignored items)
       end
@@ -228,12 +296,13 @@ function updateShop()
     if haveCurencyVal ~= nil then
       local percentage = (haveCurencyVal / totalValue) * 100
       if percentage > 100 then
-          percentage = 100
+        percentage = 100
       end
       if isGold then
         haveCurencyVal = formatGoldAmount(GetMoneyString(haveCurencyVal, true))
       end
-      cost = cost .. " - "..textCFormat(COLORS.green, haveCurencyVal).." (" .. string.format("%.2f", percentage) .. "%)"
+      cost = cost .. " - " ..
+          textCFormat(COLORS.green, haveCurencyVal) .. " (" .. string.format("%.2f", percentage) .. "%)"
     end
     cost = cost .. "\n\n"
   end
@@ -257,19 +326,54 @@ function updateShop()
   end
 end
 
+-- Equip item from merchant frame
+function merchantEquipHandler(i)
+  local itemFrame = _G["MerchantItem" .. i .. "ItemButton"]
+  local equipBtn = buttonBuilder({
+    buttonName = "MerchantItem" .. i .. "EquipBtn",
+    parent = itemFrame,
+    text = "Equip",
+    width = 60,
+    height = 22,
+    point = {
+      pos = "BOTTOMRIGHT",
+      x = 85,
+      y = -4,
+    }
+  })
+  equipBtn:HookScript("OnClick", function(self, button)
+    if button == "LeftButton" then
+      local index = tonumber(self:GetName():match("%d+"))
+      local sourceId = merchantIndex[index]
+      local source = getItemDetails(sourceId)
+      local slots = getItemSlot(source.itemEquipLoc)
+      if slots ~= 0 then
+        local slotTarget = 0
+        for _, slot in pairs(slots) do
+          if slotTarget == 0 then slotTarget = slot end
+        end
+        C_Item.EquipItemByName(source.link, slotTarget)
+        _G["StaticPopup1Button1"]:Click()
+      end
+    end
+  end)
+end
 
+-- ========================
+-- Section: Addon RegisterEvent
+-- ========================
 local CollectorHelper = CreateFrame("Frame")
 CollectorHelper:RegisterEvent("ADDON_LOADED")
 CollectorHelper:RegisterEvent("TRANSMOG_COLLECTION_SOURCE_ADDED")
 CollectorHelper:RegisterEvent("GET_ITEM_INFO_RECEIVED")
 CollectorHelper:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-CollectorHelper:SetScript("OnEvent",function(self,event,arg1,arg2,arg3)
-  if event == "ADDON_LOADED" and arg1 =="CollectorHelper" then
+CollectorHelper:SetScript("OnEvent", function(self, event, arg1, arg2, arg3)
+  if event == "ADDON_LOADED" and arg1 == "CollectorHelper" then
     if settings == nil then
-      settings = settings or {hideMerchantOwned = true}
+      settings = settings or { hideMerchantOwned = true }
     end
-    hooksecurefunc("MerchantFrame_Update",updateShop)
-    MerchantNextPageButton:HookScript("OnClick",updateShop)
-    MerchantPrevPageButton:HookScript("OnClick",updateShop)
+    hooksecurefunc("MerchantFrame_Update", updateShop)
+    MerchantNextPageButton:HookScript("OnClick", updateShop)
+    MerchantPrevPageButton:HookScript("OnClick", updateShop)
   end
 end)

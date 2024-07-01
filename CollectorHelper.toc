@@ -2,12 +2,13 @@
 
 ## Title: CollectorHelper
 ## Author: Skarlex
-## Version: 1.1
-## Notes: Hide vendor collected items
-## IconTexture: 3994716
+## Version: 1.2
+## Notes: Hide vendor collected items/ Buy page / Merchant Page price calculator
+## IconTexture: Interface\AddOns\CollectorHelper\Media\Textures\Logo
 ## SavedVariables: settings
 
-core/classes.lua
-core/globals.lua
-core/utils.lua
+Core/classes.lua
+Core/globals.lua
+Core/utils.lua
+Core/sourceItemHelper.lua
 CollectorHelper.lua

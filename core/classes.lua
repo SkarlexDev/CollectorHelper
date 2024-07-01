@@ -3,11 +3,22 @@
 ---@field x number
 ---@field y number
 
+---@class CH.CustomFontConstructorOptions
+---@field parent BackdropTemplate|Frame
+---@field text string
+---@field point CH.Point
+
+
 ---@class CH.CustomFrameConstructorOptions
 ---@field frameName string
----@field parent Frame
+---@field parent BackdropTemplate|Frame
 ---@field width number
 ---@field height number
+---@field point CH.Point
+---@field titleBuilder? CH.CustomFrameconstructorTitle
+
+---@class CH.CustomFrameconstructorTitle
+---@field text string
 ---@field point CH.Point
 
 ---@class CH.CustomButtonConstructorOptions

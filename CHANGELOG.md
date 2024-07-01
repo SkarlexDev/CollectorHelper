@@ -1,5 +1,13 @@
 # CollectorHelper
 
+## V1.2
+- Added elvui skin helper
+- Fixed transmog item sources from CanIMogIt solution
+- Frame/buttons better handle
+- Added BoE vendor items in bag with equip button from merchant item 
+- Fixed equip button with skip confirmation
+- Added addon logo texture
+
 ## V1.1
 - Money frame hide added
 - Pet filter added

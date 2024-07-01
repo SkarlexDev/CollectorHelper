@@ -1,29 +1,28 @@
-FORCE_SHOW_MERCHANT = false
 
-VALID_INV_TYPE = {
-    INVTYPE_HEAD = true,
-    INVTYPE_SHOULDER = true,
-    INVTYPE_BODY = true,
-    INVTYPE_CHEST = true,
-    INVTYPE_WAIST = true,
-    INVTYPE_LEGS = true,
-    INVTYPE_FEET = true,
-    INVTYPE_WRIST = true,
-    INVTYPE_HAND = true,
-    INVTYPE_WEAPON = true,
-    INVTYPE_SHIELD = true,
-    INVTYPE_RANGED = true,
-    INVTYPE_CLOAK = true,
-    INVTYPE_2HWEAPON = true,
-    INVTYPE_TABARD = true,
-    INVTYPE_ROBE = true,
-    INVTYPE_WEAPONMAINHAND = true,
-    INVTYPE_WEAPONOFFHAND = true,
-    INVTYPE_HOLDABLE = true,
-    INVTYPE_THROWN = true,
-    INVTYPE_RANGEDRIGHT = true,
-    INVTYPE_QUIVER = true
+ITEM_SLOT_ENUM = {
+    INVTYPE_HEAD = {1},
+    INVTYPE_SHOULDER = {3},
+    INVTYPE_BODY = {4},
+    INVTYPE_CHEST = {5},
+    INVTYPE_WAIST = {6},
+    INVTYPE_LEGS = {7},
+    INVTYPE_FEET = {8},
+    INVTYPE_WRIST = {9},
+    INVTYPE_HAND = {10},
+    INVTYPE_WEAPON = {16, 17},  -- [Dual Wield]
+    INVTYPE_SHIELD = {17},
+    INVTYPE_RANGED = {16},
+    INVTYPE_CLOAK = {15},
+    INVTYPE_2HWEAPON = {16},
+    INVTYPE_TABARD = {19},
+    INVTYPE_ROBE = {5},
+    INVTYPE_WEAPONMAINHAND = {16},
+    INVTYPE_WEAPONOFFHAND = {16},
+    INVTYPE_HOLDABLE = {17},
+    INVTYPE_THROWN = {16},
+    INVTYPE_RANGEDRIGHT = {16}
 }
+
 
 COLORS = {
     green = "PURE_GREEN_COLOR",
