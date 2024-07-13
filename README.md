@@ -3,5 +3,7 @@
 ![image](https://github.com/SkarlexDev/CollectorHelper/assets/25087216/9e36c743-dbe4-4ce6-9cd2-9579e103c8e7)
 ![image](https://github.com/SkarlexDev/CollectorHelper/assets/25087216/cc4f5275-d6d7-43f1-b257-27c936a4115d)
 ![image](https://github.com/SkarlexDev/CollectorHelper/assets/25087216/13b329fa-4af6-40a4-89cb-d9dd225b5439)
-
-
+![image](https://github.com/user-attachments/assets/9ae943d0-2d5e-4d74-aa1a-3e489ace0081)
+![image](https://github.com/user-attachments/assets/f0a70864-f4eb-4bc7-a78c-820ee7fe0bf6)
+![image](https://github.com/user-attachments/assets/78a712c8-f5d4-4c93-b2b7-526f4a4b74d6)
+![image](https://github.com/user-attachments/assets/5c6fa2e9-be22-42ad-82ef-e902d7a9977e)
