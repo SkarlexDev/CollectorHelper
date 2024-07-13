@@ -1,5 +1,10 @@
 # CollectorHelper
 
+## V1.3
+- Code update
+- Added toggle button for cost frame
+- Updated cost frame with list of items + tooltips
+
 ## V1.2
 - Added elvui skin helper
 - Fixed transmog item sources from CanIMogIt solution

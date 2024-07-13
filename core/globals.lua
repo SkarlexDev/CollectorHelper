@@ -1,5 +1,10 @@
+local _, app = ...
 
-ITEM_SLOT_ENUM = {
+app.merchantTokenMap = {}
+app.itemIndexMap = {}
+app.forceShowMerchant = false;
+
+app.ITEM_SLOT_ENUM = {
     INVTYPE_HEAD = {1},
     INVTYPE_SHOULDER = {3},
     INVTYPE_BODY = {4},
@@ -24,7 +29,7 @@ ITEM_SLOT_ENUM = {
 }
 
 
-COLORS = {
+app.COLORS = {
     green = "PURE_GREEN_COLOR",
     yellow = "YELLOW_FONT_COLOR"
 }

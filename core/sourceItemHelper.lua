@@ -1,29 +1,28 @@
+local _, app = ...
 -- implemented from CanIMogIt
 -- https://gitlab.com/toreltwiddler/CanIMogIt/-/blob/master/code.lua
 
-local itemSlotsEnum = ITEM_SLOT_ENUM
-
-function getItemSlot(itemEquipLoc)
-    return itemSlotsEnum[itemEquipLoc] or 0
+function app:getItemSlot(itemEquipLoc)
+    return app.ITEM_SLOT_ENUM[itemEquipLoc] or 0
 end
 
 local DressUpModel = CreateFrame('DressUpModel')
 DressUpModel:SetUnit('player')
 
-function GetSourceID(itemLink)
+function app:GetSourceID(itemLink)
     if itemLink == nil then return nil end
     local sourceID = select(2, C_TransmogCollection.GetItemInfo(itemLink))
     if sourceID then
         return sourceID
     end
-    return RetailOldGetSourceID(itemLink)
+    return app:RetailOldGetSourceID(itemLink)
 end
 
-function RetailOldGetSourceID(itemLink)
+function app:RetailOldGetSourceID(itemLink)
     -- Some items don't have the C_TransmogCollection.GetItemInfo data,
     -- so use the old way to find the sourceID (using the DressUpModel).
     local itemID, _, _, slotName = C_Item.GetItemInfoInstant(itemLink)
-    local slots = getItemSlot(slotName)
+    local slots = app:getItemSlot(slotName)
 
     if slots == nil or slots == false or C_Item.IsDressableItemByID(itemID) == false or slots == 0 then return end
 
@@ -40,7 +39,7 @@ function RetailOldGetSourceID(itemLink)
             -- The `appearanceID` field from `DressUpModel:GetItemTransmogInfo` is actually its
             -- source ID, not it's appearance ID.
             local sourceID = transmogInfo.appearanceID
-            if not IsSourceIDFromItemLink(sourceID, itemLink) then
+            if not app:IsSourceIDFromItemLink(sourceID, itemLink) then
                 -- This likely means that the game hasn't finished loading things
                 -- yet, so let's wait until we get good data before caching it.
                 return
@@ -51,20 +50,18 @@ function RetailOldGetSourceID(itemLink)
     return nil
 end
 
-function IsSourceIDFromItemLink(sourceID, itemLink)
+function app:IsSourceIDFromItemLink(sourceID, itemLink)
     -- Returns whether the source ID given matches the itemLink.
     local sourceItemLink = select(6, C_TransmogCollection.GetAppearanceSourceInfo(sourceID))
     if not sourceItemLink then return false end
-    return DoItemIDsMatch(sourceItemLink, itemLink)
+    return app:DoItemIDsMatch(sourceItemLink, itemLink)
 end
 
-function DoItemIDsMatch(itemLinkA, itemLinkB)
-    return GetItemID(itemLinkA) == GetItemID(itemLinkB)
+function app:DoItemIDsMatch(itemLinkA, itemLinkB)
+    return app:GetItemID(itemLinkA) == app:GetItemID(itemLinkB)
 end
 
-function GetItemID(itemLink)
+function app:GetItemID(itemLink)
     return tonumber(itemLink:match("item:(%d+)"))
 end
-
-
 

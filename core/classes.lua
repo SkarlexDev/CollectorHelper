@@ -28,3 +28,17 @@
 ---@field height number
 ---@field text string
 ---@field point CH.Point
+---@field onClickScript? function
+
+---@class CH.ItemDetails
+---@field itemId number
+---@field name string
+---@field link string
+---@field itemType string
+---@field itemEquipLoc string
+---@field bindType number
+
+
+---@class CH.Btn
+---@field Hide? function
+---@field Show? function
