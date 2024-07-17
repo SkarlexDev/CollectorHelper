@@ -39,6 +39,12 @@
 ---@field bindType number
 
 
+---@class CH.CustomScrollBuilder
+---@field parent BackdropTemplate|Frame
+---@field width number
+---@field height number
+---@field point CH.Point
+
 ---@class CH.Btn
 ---@field Hide? function
 ---@field Show? function

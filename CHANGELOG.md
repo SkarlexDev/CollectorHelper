@@ -1,5 +1,18 @@
 # CollectorHelper
 
+## V1.4
+- Dynamic Row Item Recycling in Scroll View (performance)
+- Dynamic Scrollbar Visibility (ui look)
+- Updated cost frame display with buttons like type and high-light onhover
+- Added currency chat link on click
+- Updated UI
+- Changed buy all button for all pages
+- Changed cost/page to total merchant cost
+- Added AH window support for currency items that can be bought from AH
+- Command support
+- Support for elvui Shadow & Light default merchant view
+- Support for elvui Shadow & Light default merchant view as list
+
 ## V1.3
 - Code update
 - Added toggle button for cost frame

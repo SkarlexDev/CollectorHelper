@@ -1,78 +1,229 @@
 local _, app = ...
 
-local merchantIndex = {}
-local sourceHidden = true
+-- Initialize variables and constants
+local merchantBoeIndex = {}
 local COLORS = app.COLORS
+local isAdapted = false
 
+-- Slash command to toggle the AddOn
 SLASH_COLLECTORHELPER1 = "/ch"
-SlashCmdList["COLLECTORHELPER"] = function()
-  -- do nothing
+SlashCmdList["COLLECTORHELPER"] = function(msg, editBox)
+  local command, arg1 = strsplit(" ", msg)
+  if command == "show" then
+    -- Handle /ch show command
+    print("Displaying command list:")
+    print("/ch show - Displays this help or command list.")
+    print("/ch ah - Perform actions related to the auction house.")
+  elseif command == "" then
+    print("No arguments provided. Usage:")
+    print("/ch show - Displays available commands.")
+  elseif command == "ah" then
+    app.ahFrame:Show()
+  else
+    print("Unknown command. Usage:")
+    print("/ch show - Displays available commands.")
+    print("/ch ah - Perform actions related to the auction house.")
+  end
 end
 
 
--- ========================
--- Section: Merchant items
--- ========================
-function app:updateShop()
-  local itemData = {}
+-- Adapts the interface for ElvUI Shadow & Light edit (SLE)
+function app:adaptSLE()
+  local scrollFrame = _G['SLE_ListMerchantScrollFrame']
+  local orgScript1 = scrollFrame:GetScript("OnVerticalScroll")
+
+  local function OnVerticalScroll(self, offset)
+    orgScript1(self, offset)
+    app:updateShop()
+  end
+
+  scrollFrame:SetScript("OnVerticalScroll", OnVerticalScroll)
+
+  local sleFrame = _G["SLE_ListMerchantFrame"]
+  local orgScript2 = sleFrame:GetScript("OnEvent")
+
+  local function OnEvent(self, event, ...)
+    orgScript2(self, event, ...)
+    C_Timer.After(0.25, function()
+      app:updateShop()
+    end)
+    C_Timer.After(0.50, function()
+      app:updateShop()
+    end)
+  end
+  sleFrame:SetScript("OnEvent", OnEvent)
+
+  -- search
+  local search = _G["SLE_ListMerchantFrameSearch"]
+  local s1 = search:GetScript("OnTextChanged")
+  local s2 = search:GetScript("OnShow")
+  local s3 = search:GetScript("OnEnterPressed")
+  local s4 = search:GetScript("OnEscapePressed")
+  local s5 = search:GetScript("OnEditFocusLost")
+  local s6 = search:GetScript("OnEditFocusGained")
+
+  local function s1s(self)
+    s1(self)
+    app:updateShop()
+  end
+
+  local function s2s(self)
+    s2(self)
+    app:updateShop()
+  end
+
+  local function s3s(self)
+    s3(self)
+    app:updateShop()
+  end
+
+  local function s4s(self)
+    s4(self)
+    app:updateShop()
+  end
+
+  local function s5s(self)
+    s5(self)
+    app:updateShop()
+  end
+
+  local function s6s(self)
+    s6(self)
+    app:updateShop()
+  end
+
+  search:SetScript("OnTextChanged", s1s)
+  search:SetScript("OnShow", s2s)
+  search:SetScript("OnEnterPressed", s3s)
+  search:SetScript("OnEscapePressed", s4s)
+  search:SetScript("OnEditFocusLost", s5s)
+  search:SetScript("OnEditFocusGained", s6s)
+
+  isAdapted = true
+end
+
+-- Handles hiding and adapting merchant items
+function app:merchantItemHideHandler()
   local size = MERCHANT_ITEMS_PER_PAGE ---@type number
-  local currencyMap = {}
-  local currencyLink = {}
-  local initialItemIndexMap = {}
-  merchantIndex = {}        -- reset
-  app.merchantTokenMap = {} -- reset
+
+  local isSLE = _G["SLE_ListMerchantFrame"] ~= nil -- Check if SLE is active
+  if isSLE then size = GetMerchantNumItems() or 1 end
+  if isSLE and not isAdapted then app:adaptSLE() end
 
   for i = 1, size do
     local itemIndex = (MerchantFrame.page - 1) * size + i ---@type number
+    if isSLE then
+      itemIndex = i
+    end
     local itemId = GetMerchantItemID(itemIndex) ---@type number|nil
-    if itemId ~= nil then
-      merchantIndex[i] = itemId
+
+    if itemId then
+      merchantBoeIndex[i] = itemId
       local source = app:getItemDetails(itemId)
       local shopItemState = app:checkShopID(source)
       local equipBtn = _G["MerchantItem" .. i .. "EquipBtn"] ---@type CH.Btn
-      local showSources = _G["MerchantItem" .. i .. "ShowSrcBtn"] ---@type CH.Btn
-      if equipBtn ~= nil then
+      if equipBtn then
         equipBtn:Hide()
       end
-      if showSources ~= nil then
-        showSources:Hide()
-      end
+      -- Handle different item states
       if shopItemState == 1 then
         if settings.hideMerchantOwned then
-          SetItemButtonSlotVertexColor(_G["MerchantItem" .. i], 0.4, 0.4, 0.4)
-          _G["MerchantItem" .. i .. "ItemButton"]:Hide()
-          _G["MerchantItem" .. i .. "Name"]:SetText("")
-          _G["MerchantItem" .. i .. "AltCurrencyFrame"]:Hide()
-          _G["MerchantItem" .. i .. "MoneyFrame"]:Hide()
-        elseif app.forceShowMerchant == true then
-          local currencyIndex = GetMerchantItemCostInfo(itemIndex)
-          SetItemButtonSlotVertexColor(_G["MerchantItem" .. i], 1, 1, 1)
-          _G["MerchantItem" .. i .. "ItemButton"]:Show()
-          _G["MerchantItem" .. i .. "Name"]:SetText(source.name)
-          if currencyIndex == 0 then
-            _G["MerchantItem" .. i .. "MoneyFrame"]:Show()
+          if not isSLE then
+            SetItemButtonSlotVertexColor(_G["MerchantItem" .. i], 0.4, 0.4, 0.4)
+            _G["MerchantItem" .. i .. "ItemButton"]:Hide()
+            _G["MerchantItem" .. i .. "Name"]:SetText("")
+            _G["MerchantItem" .. i .. "AltCurrencyFrame"]:Hide()
+            _G["MerchantItem" .. i .. "MoneyFrame"]:Hide()
           else
-            _G["MerchantItem" .. i .. "AltCurrencyFrame"]:Show()
-          end
-        end
-      elseif shopItemState == 0 or shopItemState == 15 then
-        local currencyIndex = GetMerchantItemCostInfo(itemIndex)
-        local itemsSources = 1
-        if shopItemState == 15 then -- TODO items with sources
-          local notOwnedCount = 0
-          for _, entry in ipairs(app.merchantTokenMap[source.itemId]) do
-            if not entry.owned then
-              notOwnedCount = notOwnedCount + 1
+            for jk = 1, 10 do
+              local sleBtn = _G["SLE_ListMerchantFrame_Button" .. jk]
+              if sleBtn and sleBtn.link then
+                C_Item.RequestLoadItemDataByID(sleBtn.link)
+                local itId = C_Item.GetItemInfoInstant(sleBtn.link)
+                if itId == itemId then
+                  sleBtn:Hide()
+                end
+              end
             end
           end
-          local srcBtn = _G["MerchantItem" .. i .. "ShowSrcBtn"] ---@type CH.Btn
-          if srcBtn == nil then
-            handleSourceMerchantToken(i)
+        elseif app.forceShowMerchant then
+          if not isSLE then
+            local currencyIndex = GetMerchantItemCostInfo(itemIndex)
+            SetItemButtonSlotVertexColor(_G["MerchantItem" .. i], 1, 1, 1)
+            _G["MerchantItem" .. i .. "ItemButton"]:Show()
+            _G["MerchantItem" .. i .. "Name"]:SetText(source.name)
+            if currencyIndex == 0 then
+              _G["MerchantItem" .. i .. "MoneyFrame"]:Show()
+            else
+              _G["MerchantItem" .. i .. "AltCurrencyFrame"]:Show()
+            end
           else
-            srcBtn:Show()
+            for jk = 1, 10 do
+              local sleBtn = _G["SLE_ListMerchantFrame_Button" .. jk]
+              if sleBtn and sleBtn.link then
+                C_Item.RequestLoadItemDataByID(sleBtn.link)
+                local itId = C_Item.GetItemInfoInstant(sleBtn.link)
+                if itId == itemId then
+                  sleBtn:Show()
+                end
+              end
+            end
           end
-          itemsSources = notOwnedCount
         end
+      elseif shopItemState == 10 then
+        if not isSLE then
+          _G["MerchantItem" .. i .. "Name"]:SetText("This item is in your bag")
+          _G["MerchantItem" .. i .. "AltCurrencyFrame"]:Hide()
+          _G["MerchantItem" .. i .. "MoneyFrame"]:Hide()
+          local eqBtn = _G["MerchantItem" .. i .. "EquipBtn"]
+          if not eqBtn then
+            app:merchantEquipHandler(i)
+          else
+            eqBtn:Show()
+          end
+        else
+          for jk = 1, 10 do
+            local sleBtn = _G["SLE_ListMerchantFrame_Button" .. jk]
+            if sleBtn and sleBtn.link then
+              C_Item.RequestLoadItemDataByID(sleBtn.link)
+              local itId = C_Item.GetItemInfoInstant(sleBtn.link)
+              if itId == itemId then
+                sleBtn:Show()
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+  app.forceShowMerchant = false
+end
+
+-- Update the shop items in the merchant frame
+
+
+function app:updateShop()
+  local itemData = {}
+  local size = GetMerchantNumItems() or MERCHANT_ITEMS_PER_PAGE
+  local currencyMap = {}
+  local currencyMapAH = {}
+  local currencyLink = {}
+  local initialItemIndexMap = {}
+  merchantBoeIndex = {}
+  app.ahItems = {} -- Reset auction house items
+
+  app:merchantItemHideHandler()
+
+  for i = 1, size do
+    local itemIndex = i
+    local itemId = GetMerchantItemID(itemIndex) ---@type number|nil
+    if itemId ~= nil then
+      local source = app:getItemDetails(itemId)
+      local shopItemState = app:checkShopID(source)
+
+      if shopItemState == 0 then
+        local currencyIndex = GetMerchantItemCostInfo(itemIndex)
+        local itemsSources = 1
         if currencyIndex == 0 then
           -- is gold
           local _, _, price, _, _, _, _, _ = GetMerchantItemInfo(itemIndex)
@@ -85,13 +236,28 @@ function app:updateShop()
               else
                 currencyMap[itemTexture] = price
               end
-              local count = GetMoney()
-              itemData[itemTexture] = count
+              local money = GetMoney()
+              local gold = floor(money / 1e4)
+              local silver = floor(money / 100 % 100)
+              local copper = money % 100
+              if gold > 0 then
+                money = money - (silver * 100) - copper
+              end
+              itemData[itemTexture] = money
             end
           end
         else
           for y = 1, currencyIndex do
             local itemTexture, itemValue, link = GetMerchantItemCostItem(itemIndex, y)
+            local isItemForAh = false
+            local itemName = ""
+            if link ~= nil and app.doAhTrack == true then
+              local itSrc = app:getItemDetails(link)
+              isItemForAh = itSrc ~= nil and itSrc.bindType ~= nil and itSrc.bindType == 0
+              if itSrc ~= nil then
+                itemName = itSrc.name
+              end
+            end
             for _ = 1, itemsSources do
               if itemTexture then
                 if currencyLink[itemTexture] == nil then
@@ -109,44 +275,35 @@ function app:updateShop()
                   local count = C_Item.GetItemCount(link)
                   itemData[itemTexture] = count
                 end
+                if isItemForAh then
+                  currencyMapAH[itemTexture] = itemName
+                end
               end
             end
           end
         end
         initialItemIndexMap[itemIndex] = itemId
-      elseif shopItemState == 10 then
-        -- item is in bag should equip to learn
-        _G["MerchantItem" .. i .. "Name"]:SetText("This item is in your bag")
-        _G["MerchantItem" .. i .. "AltCurrencyFrame"]:Hide()
-        _G["MerchantItem" .. i .. "MoneyFrame"]:Hide()
-        local eqBtn = _G["MerchantItem" .. i .. "EquipBtn"] ---@type CH.Btn
-        if eqBtn == nil then
-          app:merchantEquipHandler(i)
-        else
-          eqBtn:Show()
-        end
-      else
-        -- (ignored items)
       end
     end
   end
   app.forceShowMerchant = false
 
+  -- Process collected currency data
   local costTable = {}
 
   local missingItem = false
   for itemTexture, totalValue in pairs(currencyMap) do
     local display = ""
-    local description = ""
     local haveCurencyVal = itemData[itemTexture]
     local isGold = itemTexture == "MoneyCurrency"
+    local percentage = nil
     if isGold then
-      display = display .. app:formatGoldAmount(GetMoneyString(totalValue, true))
+      display = display .. " " .. app:formatGoldAmount(GetMoneyString(totalValue, true))
     else
       display = display .. "|T" .. itemTexture .. ":16|t " .. totalValue
     end
     if haveCurencyVal ~= nil then
-      local percentage = (haveCurencyVal / totalValue) * 100
+      percentage = (haveCurencyVal / totalValue) * 100
       if percentage > 100 then
         percentage = 100
       end
@@ -154,35 +311,55 @@ function app:updateShop()
         haveCurencyVal = app:formatGoldAmount(GetMoneyString(haveCurencyVal, true))
       end
       display = display .. " - " ..
-          app:textCFormat(COLORS.green, haveCurencyVal) .. " (" .. string.format("%.2f", percentage) .. "%)"
+          app:textCFormat(COLORS.green, haveCurencyVal)
     end
 
     table.insert(costTable, {
       display = display,
-      description = description,
-      isGold = isGold,
-      linkItem = currencyLink[itemTexture]
+      linkItem = currencyLink[itemTexture],
+      percentage = percentage
     })
+
+    local ahTrack = currencyMapAH[itemTexture]
+    if ahTrack then
+      local cost = totalValue
+      if haveCurencyVal then
+        cost = cost - haveCurencyVal
+      end
+      display = " |T" .. itemTexture .. ":16|t " .. " " .. ahTrack
+      --for i = 1, 10, 1 do
+      table.insert(app.ahItems, {
+        display = display,
+        linkItem = currencyLink[itemTexture],
+        quantity = app:textCFormat(COLORS.white, cost),
+        clear = true
+      })
+      --end
+    end
     missingItem = true
   end
 
-  if missingItem == true then
-    app.marchantCost:Hide()
+  app.doAhTrack = false
+
+  -- Show or hide the merchant cost frame based on item availability
+  if missingItem then
+    app.merchantCost:Hide()
     app.mainScrollableContent.scrollFrame:Show()
     app.mainScrollableContent.UpdateRows(costTable)
   else
-    app.marchantCost:Show()
+    app.merchantCost:Show()
     app.mainScrollableContent.scrollFrame:Hide()
     app.mainScrollableContent.UpdateRows(costTable)
   end
-  -- Create a sorted list of itemIndex keys
+
+  -- Sort and store item indices
   local sortedItemIndices = {}
   for itemIndex in pairs(initialItemIndexMap) do
     table.insert(sortedItemIndices, itemIndex)
   end
   table.sort(sortedItemIndices)
 
-  -- Create a new sorted map
+
   app.itemIndexMap = {}
   for _, itemIndex in ipairs(sortedItemIndices) do
     app.itemIndexMap[itemIndex] = initialItemIndexMap[itemIndex]
@@ -211,7 +388,7 @@ function app:merchantEquipHandler(i)
   equipBtn:HookScript("OnClick", function(self, button)
     if button == "LeftButton" then
       local index = tonumber(self:GetName():match("%d+"))
-      local sourceId = merchantIndex[index]
+      local sourceId = merchantBoeIndex[index]
       local source = app:getItemDetails(sourceId)
       local slots = app:getItemSlot(source.itemEquipLoc)
       if slots ~= 0 then
@@ -224,86 +401,6 @@ function app:merchantEquipHandler(i)
       end
     end
   end)
-end
-
--- IN Work
--- Token display possible rewards class based
-function handleSourceMerchantToken(i)
-  local itemFrame = _G["MerchantItem" .. i]
-  local equipBtn = app:buttonBuilder({
-    buttonName = "MerchantItem" .. i .. "ShowSrcBtn",
-    parent = itemFrame,
-    text = "Source",
-    width = 50,
-    height = 22,
-    point = {
-      pos = "BOTTOMRIGHT",
-      x = 0,
-      y = 0,
-    }
-  })
-  equipBtn:HookScript("OnClick", function(self, button)
-    if button == "LeftButton" then
-      local index = tonumber(self:GetName():match("%d+"))
-      local sourceId = merchantIndex[index]
-      local source = app:getItemDetails(sourceId)
-      local tokenSrc = app.merchantTokenMap[source.itemId]
-      -- print(tokenSrc)
-      for _, item in pairs(tokenSrc) do
-        -- owned = isOwned, itemId = itemId
-        if (not item.owned) then
-          local details = app:getItemDetails(item.itemId) ---@type CH.ItemDetails
-          --print(details.link)
-          --print(item.owned)
-          --print(item.itemId)
-          --local details = getItemDetails(item.itemId)
-          --print(details)
-          --print(details.itemLink)
-          local t =
-          "|cffa335ee|Hitem:159300::168639::::::59:103::35:7:6536:6578:1543:4786:6439:6470:6514::::|h[Kula's Butchering Wristwraps]|h|r"
-          --sourceDetails:SetText(details.link)
-          app:createUserFrame(details.link)
-        end
-      end
-      app.merchantSourceItems:Show()
-      app.merchantFrameCost:SetPoint("TOPRIGHT", 280 * 2, 0)
-    end
-  end)
-end
-
-function app:createUserFrame(t)
-  local function createText(parent, w, h, x, y)
-    local t = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    t:SetSize(w, h)
-    t:SetPoint("TOPLEFT", x, y)
-    t:SetJustifyH("LEFT")
-    t:SetWordWrap(false)
-    return t
-  end
-
-  local userFrame = CreateFrame("Frame", nil, app.merchantSourceItems, "BackdropTemplate")
-  userFrame:SetClipsChildren(true)
-  userFrame:SetSize(492 + 24, 24)
-  userFrame:SetBackdrop({
-    bgFile = "Interface\\Buttons\\WHITE8x8"
-  })
-  userFrame:SetBackdropColor(0, 0, 0)
-  userFrame:SetPoint("TOPLEFT", 0, 0)
-  --userFrame:SetText(t)
-  local userName = createText(userFrame, 240, 26, 6, 1)
-  userName:SetText(t)
-end
-
-function toogleSourceTab()
-  if sourceHidden == true then
-    app.merchantFrameCost:SetPoint("TOPRIGHT", 280, 0)
-    app.merchantSourceItems:Hide()
-    sourceHidden = false
-  else
-    app.merchantSourceItems:Show()
-    app.merchantFrameCost:SetPoint("TOPRIGHT", 280 * 2, 0)
-    sourceHidden = true
-  end
 end
 
 -- ========================
@@ -323,7 +420,7 @@ CollectorHelper:SetScript("OnEvent", function(self, event, arg1, arg2, arg3)
   end
 end)
 
-
+-- Initialize or migrate settings
 function app:doSettings()
   if settings == nil then
     settings = {
@@ -334,14 +431,13 @@ function app:doSettings()
   app:MigrateSettings()
 
   if settings.showCostFrame == false then
-      app.merchantFrameCost:Hide()
+    app.merchantFrameCost:Hide()
   end
 end
-
 
 function app:MigrateSettings()
   -- Check if settings table exists and if migration is needed
   if settings.showCostFrame == nil then
-      settings.showCostFrame = true
+    settings.showCostFrame = true
   end
 end
