@@ -1,5 +1,9 @@
 # CollectorHelper
 
+## V1.4.2
+- Fixed buttons overlap on classic interface
+- Shorter button names
+
 ## V1.4
 - Dynamic Row Item Recycling in Scroll View (performance)
 - Dynamic Scrollbar Visibility (ui look)

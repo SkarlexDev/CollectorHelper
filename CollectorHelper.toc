@@ -2,8 +2,8 @@
 
 ## Title: CollectorHelper
 ## Author: Skarlex
-## Version: 1.4
-## Notes: Hide vendor collected items/ Buy page / Merchant Page price calculator
+## Version: 1.4.2
+## Notes: Hide vendor collected items/ Buy page / Merchant price calculator
 ## IconTexture: Interface\AddOns\CollectorHelper\Core\Media\Textures\Logo
 ## SavedVariables: settings
 
