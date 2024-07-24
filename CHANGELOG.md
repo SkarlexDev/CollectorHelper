@@ -1,5 +1,8 @@
 # CollectorHelper
 
+## V1.4.3
+- The War Within patch 11.0 supported.
+
 ## V1.4.2
 - Fixed buttons overlap on classic interface
 - Shorter button names
