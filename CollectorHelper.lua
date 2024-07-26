@@ -121,7 +121,7 @@ function app:merchantItemHideHandler()
       merchantBoeIndex[i] = itemId
       local source = app:getItemDetails(itemId)
       local shopItemState = app:checkShopID(source)
-      local equipBtn = _G["MerchantItem" .. i .. "EquipBtn"] ---@type CH.Btn
+      local equipBtn = _G["MerchantItem" .. i .. "ActionFrameBtn"] ---@type CH.Btn
       if equipBtn then
         equipBtn:Hide()
       end
@@ -175,7 +175,7 @@ function app:merchantItemHideHandler()
           _G["MerchantItem" .. i .. "Name"]:SetText("This item is in your bag")
           _G["MerchantItem" .. i .. "AltCurrencyFrame"]:Hide()
           _G["MerchantItem" .. i .. "MoneyFrame"]:Hide()
-          local eqBtn = _G["MerchantItem" .. i .. "EquipBtn"]
+          local eqBtn = _G["MerchantItem" .. i .. "ActionFrameBtn"]
           if not eqBtn then
             app:merchantEquipHandler(i)
           else
@@ -373,16 +373,30 @@ end
 -- Equip item from merchant frame
 function app:merchantEquipHandler(i)
   local itemFrame = _G["MerchantItem" .. i .. "ItemButton"]
-  local equipBtn = app:buttonBuilder({
-    buttonName = "MerchantItem" .. i .. "EquipBtn",
+  local mActionFrame = app:frameBuilder({
+    frameName = "MerchantItem" .. i .. "ActionFrameBtn",
     parent = itemFrame,
-    text = "Equip",
-    width = 60,
-    height = 22,
+    width = 110,
+    height = 20,
     point = {
       pos = "BOTTOMRIGHT",
-      x = 85,
-      y = -4,
+      x = 115,
+      y = -10,
+    }
+  })
+  mActionFrame:SetBackdropColor(0, 0, 0, 0)
+  mActionFrame:SetBackdropBorderColor(0, 0, 0, 0)
+
+  local equipBtn = app:buttonBuilder({
+    buttonName = "MerchantItem" .. i .. "EquipBtn",
+    parent = mActionFrame,
+    text = "Equip",
+    width = 50,
+    height = 22,
+    point = {
+      pos = "BOTTOMLEFT",
+      x = 3,
+      y = 0,
     }
   })
   equipBtn:HookScript("OnClick", function(self, button)
@@ -398,6 +412,41 @@ function app:merchantEquipHandler(i)
         end
         C_Item.EquipItemByName(source.link, slotTarget)
         _G["StaticPopup1Button1"]:Click()
+      end
+    end
+  end)
+
+  local equipUBtn = app:buttonBuilder({
+    buttonName = "MerchantItem" .. i .. "EquipUBtn",
+    parent = mActionFrame,
+    text = "Sell",
+    width = 45,
+    height = 22,
+    point = {
+      pos = "BOTTOMRIGHT",
+      x = -8,
+      y = 0,
+    }
+  })
+  equipUBtn:HookScript("OnClick", function(self, button)
+    if button == "LeftButton" then
+      local index = tonumber(self:GetName():match("%d+"))
+      local sourceId = merchantBoeIndex[index]
+      local source = app:getItemDetails(sourceId)
+      local slots = app:getItemSlot(source.itemEquipLoc)
+      if slots ~= 0 then
+        -- Find the item in the bags and use it
+        for bag = 0, NUM_BAG_SLOTS do
+          for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            local bagItem = C_Container.GetContainerItemInfo(bag, slot)
+            if bagItem ~= nil then
+              if bagItem.itemID == sourceId then
+                C_Container.UseContainerItem(bag, slot)
+                return
+              end
+            end
+          end
+        end
       end
     end
   end)

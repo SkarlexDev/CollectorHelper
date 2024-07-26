@@ -1,5 +1,8 @@
 # CollectorHelper
 
+## V1.4.4
+- Added sell button for boe merchant items (warband collect faster)
+
 ## V1.4.3
 - The War Within patch 11.0 supported.
 
