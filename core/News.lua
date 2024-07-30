@@ -129,7 +129,7 @@ function app:InitNews()
                     end
                 end
             })
-            app.merchantCost = app:fontBuilder({
+            app:fontBuilder({
                 parent = newsFrame,
                 text = app:textCFormat(COLORS.yellow, "Made By Skarlex"),
                 point = {
