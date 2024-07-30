@@ -29,9 +29,9 @@ app.ITEM_SLOT_ENUM = {
     INVTYPE_RANGEDRIGHT = { 16 }
 }
 
-
 app.COLORS = {
     green = "PURE_GREEN_COLOR",
+    red = "RED_FONT_COLOR",
     yellow = "YELLOW_FONT_COLOR",
     white = "WHITE_FONT_COLOR"
 }

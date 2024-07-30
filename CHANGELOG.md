@@ -1,5 +1,20 @@
 # CollectorHelper
 
+## V1.5.0
+- Added Changelog frame
+- Code optimisations
+- Removed Equip button from boe items
+- Added Destroy button to boe iteems
+- Split functions into independent modules
+- Updated command list & display
+- Added LFR helper
+    1. Display shorter name on lfr option
+    2. Added tooltip with bosses in wing
+    3. Added track killed/total
+    4. Added color change for in proggress
+    5. Added finished mark for lfr wing
+    6. Added support up to Shadowlands
+
 ## V1.4.4
 - Added sell button for boe merchant items (warband collect faster)
 

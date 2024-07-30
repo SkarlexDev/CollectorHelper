@@ -142,11 +142,21 @@ function app:CreateScrollableContent(params)
         row:SetSize(params.width, 20)
         row:SetPoint("TOPLEFT", 10, -(index - 1) * 21)
 
-        local btnP = CreateFrame("Button", nil, row)
+        -- Create button with BackdropTemplate
+        local btnP = CreateFrame("Button", nil, row, "BackdropTemplate")
         btnP:RegisterForClicks("LeftButtonDown", "RightButtonDown")
         btnP:SetWidth(params.width - 20)
         btnP:SetHeight(20)
         btnP:SetPoint("CENTER", 0, 0)
+
+        -- Add a default backdrop to the button
+        btnP:SetBackdrop({
+            bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+            edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+            tile = true, tileSize = 32, edgeSize = 32,
+            insets = { left = 11, right = 12, top = 12, bottom = 11 }
+        })
+        btnP:SetBackdropColor(0.102, 0.102, 0.102, 1)
 
         -- Skin for ElvUI
         pcall(function()
@@ -315,4 +325,3 @@ function app:CreateScrollableContent(params)
         UpdateRows = UpdateRows
     }
 end
-

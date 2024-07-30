@@ -2,15 +2,20 @@
 
 ## Title: CollectorHelper
 ## Author: Skarlex
-## Version: 1.4.4
-## Notes: Hide vendor collected items/ Buy page / Merchant price calculator
+## Version: 1.5.0
+## Notes: Hide vendor collected items/ Buy page / Merchant price calculator / Ah track list / LFR Helper
 ## IconTexture: Interface\AddOns\CollectorHelper\Core\Media\Textures\Logo
 ## SavedVariables: settings
 
-Core/classes.lua
-Core/globals.lua
-Core/utils.lua
-Core/sourceItemHelper.lua
-Core/itemOwnedCheck.lua
-Core/initUI.lua
+Core/Annotations.lua
+Core/Globals.lua
+Core/Utils.lua
+Core/News.lua
+Core/MerchantExtension/SubModule/SourceItemHelper.lua
+Core/MerchantExtension/SubModule/ItemOwnedCheck.lua
+Core/MerchantExtension/MerchantExtLogic.lua
+Core/MerchantExtension/MerchantExt.lua
+
+Core/LFR/LfrData.lua
+Core/Init.lua
 CollectorHelper.lua
