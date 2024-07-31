@@ -1,5 +1,6 @@
 # CollectorHelper
-
+## V1.5.3
+- Fixed lfr check on history data from previous week
 ## V1.5.0
 - Added Changelog frame
 - Code optimisations
