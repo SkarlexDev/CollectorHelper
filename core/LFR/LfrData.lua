@@ -792,8 +792,8 @@ end)
 
 function app:GenerateLockDownData()
     for i = 1, GetNumSavedInstances() do
-        local _, _, _, difficultyId, _, _, _, isRaid, _, _, numEncounters, _, _, instanceId = GetSavedInstanceInfo(i)
-        if (isRaid and (difficultyId == 7 or difficultyId == 17)) then
+        local _, _, _, difficultyId, locked, _, _, isRaid, _, _, numEncounters, _, _, instanceId = GetSavedInstanceInfo(i)
+        if (isRaid and (difficultyId == 7 or difficultyId == 17) and locked) then
             lockDownData[instanceId] = {}
             for j = 1, numEncounters do
                 local _, _, killed = GetSavedInstanceEncounterInfo(i, j)
