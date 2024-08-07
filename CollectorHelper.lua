@@ -29,8 +29,7 @@ SlashCmdList["COLLECTORHELPER"] = function(msg, editBox)
   elseif command == "ah" then
     app.ahFrame:Show()
   elseif command == "news" then
-    settings.version = "0"
-    app:InitNews()
+    app:ShowNews()
   else
     showHelp()
   end

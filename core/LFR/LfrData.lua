@@ -774,6 +774,7 @@ local gossipData = {
     }
 }
 
+app.lfrData = lfrData;
 local activeExt = false
 local lockDownData = {}
 
@@ -792,7 +793,8 @@ end)
 
 function app:GenerateLockDownData()
     for i = 1, GetNumSavedInstances() do
-        local _, _, _, difficultyId, locked, _, _, isRaid, _, _, numEncounters, _, _, instanceId = GetSavedInstanceInfo(i)
+        local _, _, _, difficultyId, locked, _, _, isRaid, _, _, numEncounters, _, _, instanceId = GetSavedInstanceInfo(
+            i)
         if (isRaid and (difficultyId == 7 or difficultyId == 17) and locked) then
             lockDownData[instanceId] = {}
             for j = 1, numEncounters do
@@ -812,10 +814,21 @@ function app:GossipLfr()
 
     local NPCtype, _, _, _, _, npc_id, _ = strsplit("-", info)
     local lfrNpc = gossipData[npc_id]
-    if not lfrNpc then return end
+    if not lfrNpc then
+        local children = { GossipFrame.GreetingPanel.ScrollBox.ScrollTarget:GetChildren() }
+        for _, child in ipairs(children) do
+            if child.CH then
+                child.CH:Hide()
+            end
+        end
+        return
+    end
+    app:UpdateLfrGossip(lfrNpc)
+end
 
+function app:UpdateLfrGossip(lfrNpc)
     local children = { GossipFrame.GreetingPanel.ScrollBox.ScrollTarget:GetChildren() }
-    local yOffsetAdjustment = -18 -- Height adjustment for each child
+    local yOffsetAdjustment = -19 -- Height adjustment for each child
     local firstY = nil
     local currentYOffset = 0
 
@@ -847,17 +860,90 @@ function app:GossipLfr()
                         local prefix = "[" .. killed .. "/" .. totalBosses .. "]"
                         local displayText = prefix .. " " .. wing.name
 
-                        if killed > 0 and totalBosses > killed then
+                        local stateCol = false;
+                        local collectedRefState = lfrCollected[gossipRef.raidID]
+                        if collectedRefState then
+                            stateCol = collectedRefState["wings"][gossipRef.wingID]
+                        end
+
+                        if killed > 0 and totalBosses > killed and stateCol == false then
                             displayText = app:textCFormat(COLORS.yellow, displayText)
                         end
 
                         if child.Icon and totalBosses == killed then
                             child.Icon:SetTexture(130751)
-                            displayText = app:textCFormat(COLORS.green, displayText)
+                            if stateCol == false then
+                                displayText = app:textCFormat(COLORS.green, displayText)
+                            end
+                        end
+                        if stateCol == true then
+                            displayText = app:textCFormat(COLORS.red, displayText)
                         end
                         child:SetText(displayText)
                         child:SetHeight(16)
 
+                        if child.CH == nil then
+                            local mActionFrame = app:frameBuilder({
+                                frameName = nil,
+                                parent = child,
+                                width = 50,
+                                height = 16,
+                                point = {
+                                    pos = "BOTTOMRIGHT",
+                                    x = 0,
+                                    y = 0,
+                                }
+                            })
+                            mActionFrame:SetBackdropColor(0, 0, 0, 0)
+                            mActionFrame:SetBackdropBorderColor(0, 0, 0, 0)
+                            local aBtn = app:buttonBuilder({
+                                buttonName = nil,
+                                parent = mActionFrame,
+                                text = "TC/UW",
+                                width = 45,
+                                height = 16,
+                                point = {
+                                    pos = "BOTTOMLEFT",
+                                    x = 0,
+                                    y = 0,
+                                }
+                            })
+
+                            aBtn:SetScript("OnEnter", function()
+                                if activeExt then
+                                    GameTooltip:SetOwner(GossipFrame, "ANCHOR_RIGHT", 0, -34)
+                                    GameTooltip:SetText("Toggle Completed/Unmark Wing", 1, 1, 1)
+                                    GameTooltip:AddLine(
+                                        "This allows you to mark a raid wing as completed or unmark it, providing better visual tracking of your collection",
+                                        nil, nil, nil, true)
+                                    GameTooltip:AddLine(
+                                        app:textCFormat(COLORS.red, "Red") ..
+                                        " option text color will mark the completed state", nil, nil, nil, true)
+                                    GameTooltip:Show()
+                                end
+                            end)
+                            aBtn:SetScript("OnLeave", function()
+                                if activeExt then
+                                    GameTooltip:Hide()
+                                end
+                            end)
+                            child.CH = mActionFrame;
+                            child.Btn = aBtn;
+                        else
+                            child.CH:Show()
+                        end
+
+                        -- change btn refs for new gossip
+                        child.Btn:SetScript("OnClick", function(self, button)
+                            if button == "LeftButton" then
+                                local collectedRef = lfrCollected[gossipRef.raidID]
+                                if collectedRef then
+                                    local state = collectedRef["wings"][gossipRef.wingID]
+                                    collectedRef["wings"][gossipRef.wingID] = not state
+                                    app:UpdateLfrGossip(lfrNpc)
+                                end
+                            end
+                        end)
 
                         -- Adjust yOffset based on the first element with gossipOptionID
                         if not firstY then

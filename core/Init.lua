@@ -1,13 +1,13 @@
 local _, app = ...
 
-app.COLLECTORHELPER_VERSION = "1.5.2"
+app.COLLECTORHELPER_VERSION = "1.5.5"
 
 -- ========================
 -- Section: Addon init
 -- ========================
 function app:InitAddon()
-    app:InitUI()
     app:InitSettings()
+    app:InitUI()
 end
 
 function app:InitUI()
@@ -56,7 +56,7 @@ function app:InitSettings()
         }
     end
     app:MigrateSettings()
-
+    app:initializeLfrCollected()
     if settings.showCostFrame == false then
         app.merchantFrameCost:Hide()
     end
@@ -71,5 +71,24 @@ function app:MigrateSettings()
     end
     if settings.version == nil then
         settings.version = "0"
+    end
+    if settings.autoShowNews == nil then
+        settings.autoShowNews = true
+    end
+end
+
+function app:initializeLfrCollected()
+    if not lfrCollected then
+        lfrCollected = {}
+    end
+    for raidId, raidData in pairs(app.lfrData) do
+        if not lfrCollected[raidId] then
+            lfrCollected[raidId] = { wings = {} }
+        end
+        for wingId, _ in pairs(raidData.wings) do
+            if lfrCollected[raidId].wings[wingId] == nil then
+                lfrCollected[raidId].wings[wingId] = false
+            end
+        end
     end
 end

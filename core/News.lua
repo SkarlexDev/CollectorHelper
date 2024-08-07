@@ -3,6 +3,12 @@ local COLORS = app.COLORS
 
 local news = {
     {
+        "## V1.5.5",
+        "- Fixed settings migration",
+        "- Added lfr completion mark",
+        "- Added option to block news autoshow on changes"
+    },
+    {
         "## V1.5.2",
         "- Fixed lfr check on history data from previous week"
     },
@@ -84,115 +90,140 @@ local news = {
 function app:InitNews()
     if settings.version ~= app.COLLECTORHELPER_VERSION then
         settings.version = app.COLLECTORHELPER_VERSION
-        if app.newsFrame == nil then
-            local newsFrame = app:frameBuilder({
-                frameName = "CollectorHelper_News",
-                parent = UIParent,
-                width = 450,
-                height = 450,
-                point = {
-                    pos = "CENTER",
-                    x = 0,
-                    y = 0,
-                },
-                titleBuilder = {
-                    text = app:textCFormat(COLORS.yellow, "CollectorHelper Changelog - News"),
-                    point = {
-                        pos = "TOP",
-                        x = 0,
-                        y = -8,
-                    }
-                }
-            })
-
-            app.newsFrame = newsFrame
-
-            newsFrame:SetMovable(true)
-            newsFrame:EnableMouse(true)
-            newsFrame:RegisterForDrag("LeftButton")
-            newsFrame:SetScript("OnDragStart", newsFrame.StartMoving)
-            newsFrame:SetScript("OnDragStop", function(self)
-                self:StopMovingOrSizing()
-            end)
-
-            -- Close button for AH frame
-            app:buttonBuilder({
-                buttonName = "Collector_NewsCloseButton",
-                parent = newsFrame,
-                text = "Close",
-                width = 100,
-                height = 22,
-                point = {
-                    pos = "BOTTOM",
-                    x = 0,
-                    y = 8,
-                },
-                onClickScript = function(self, button)
-                    if button == "LeftButton" then
-                        newsFrame:Hide()
-                    end
-                end
-            })
-            app:fontBuilder({
-                parent = newsFrame,
-                text = app:textCFormat(COLORS.yellow, "Made By Skarlex"),
-                point = {
-                    pos = "BOTTOM",
-                    x = 150,
-                    y = 13,
-                }
-            })
-
-            -- Create a scroll frame
-            local scrollFrame = CreateFrame("ScrollFrame", nil, newsFrame, "UIPanelScrollFrameTemplate")
-            scrollFrame:SetPoint("TOPLEFT", newsFrame, "TOPLEFT", 10, -30)
-            scrollFrame:SetPoint("BOTTOMRIGHT", newsFrame, "BOTTOMRIGHT", -30, 40)
-
-            -- Create a content frame
-            local contentFrame = app:frameBuilder({
-                frameName = "CollectorHelper_NewsContent",
-                parent = scrollFrame,
-                width = 430,
-                height = 400,
-                point = {
-                    pos = "CENTER",
-                    x = 0,
-                    y = 0,
-                }
-            })
-            contentFrame:SetBackdropColor(0.1, 0.1, 0.1, 1)
-            scrollFrame:SetScrollChild(contentFrame)
-
-            -- Populate the content frame with news
-            local offset = -10
-            for _, version in ipairs(news) do
-                local versionText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-                versionText:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 10, offset)
-                versionText:SetWidth(400)
-                versionText:SetJustifyH("LEFT")
-                versionText:SetText(version[1])
-                offset = offset - versionText:GetHeight() - 10
-
-                for i = 2, #version do
-                    local newsText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-                    newsText:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 20, offset)
-                    newsText:SetWidth(400)
-                    newsText:SetJustifyH("LEFT")
-                    newsText:SetText(version[i])
-                    offset = offset - newsText:GetHeight() - 5
-                end
-                offset = offset - 10
-            end
-
-            contentFrame:SetHeight(math.abs(offset))
-
-            scrollFrame:UpdateScrollChildRect()
-            scrollFrame:SetVerticalScroll(0)
-            scrollFrame:SetScript("OnShow", function(self)
-                self:SetVerticalScroll(0)
-            end)
-        else
-            app.newsFrame:Show()
+        if settings.autoShowNews == true then
+            app:ShowNews()
         end
+    end
+end
+
+function app:ShowNews()
+    if app.newsFrame == nil then
+        local newsFrame = app:frameBuilder({
+            frameName = "CollectorHelper_News",
+            parent = UIParent,
+            width = 450,
+            height = 450,
+            point = {
+                pos = "CENTER",
+                x = 0,
+                y = 0,
+            },
+            titleBuilder = {
+                text = app:textCFormat(COLORS.yellow, "CollectorHelper Changelog - News"),
+                point = {
+                    pos = "TOP",
+                    x = 0,
+                    y = -8,
+                }
+            }
+        })
+
+        local checkbox = CreateFrame("CheckButton", nil, newsFrame, "InterfaceOptionsCheckButtonTemplate")
+        checkbox:SetPoint("BOTTOMLEFT", 7, 7)
+        checkbox.Text:SetText("Auto Open on New Changes")
+        checkbox:SetChecked(settings.autoShowNews)
+
+        local function OnCheckboxClick(self)
+            if self:GetChecked() then
+                settings.autoShowNews = true
+                -- Code to enable the feature
+                print("Feature Enabled")
+            else
+                settings.autoShowNews = false
+                -- Code to disable the feature
+                print("Feature Disabled")
+            end
+        end
+        checkbox:SetScript("OnClick", OnCheckboxClick)
+
+
+        app.newsFrame = newsFrame
+
+        newsFrame:SetMovable(true)
+        newsFrame:EnableMouse(true)
+        newsFrame:RegisterForDrag("LeftButton")
+        newsFrame:SetScript("OnDragStart", newsFrame.StartMoving)
+        newsFrame:SetScript("OnDragStop", function(self)
+            self:StopMovingOrSizing()
+        end)
+
+        -- Close button for AH frame
+        app:buttonBuilder({
+            buttonName = "Collector_NewsCloseButton",
+            parent = newsFrame,
+            text = "Close",
+            width = 100,
+            height = 22,
+            point = {
+                pos = "BOTTOM",
+                x = 0,
+                y = 8,
+            },
+            onClickScript = function(self, button)
+                if button == "LeftButton" then
+                    newsFrame:Hide()
+                end
+            end
+        })
+        app:fontBuilder({
+            parent = newsFrame,
+            text = app:textCFormat(COLORS.yellow, "Made By Skarlex"),
+            point = {
+                pos = "BOTTOM",
+                x = 150,
+                y = 13,
+            }
+        })
+
+        -- Create a scroll frame
+        local scrollFrame = CreateFrame("ScrollFrame", nil, newsFrame, "UIPanelScrollFrameTemplate")
+        scrollFrame:SetPoint("TOPLEFT", newsFrame, "TOPLEFT", 10, -30)
+        scrollFrame:SetPoint("BOTTOMRIGHT", newsFrame, "BOTTOMRIGHT", -30, 40)
+
+        -- Create a content frame
+        local contentFrame = app:frameBuilder({
+            frameName = "CollectorHelper_NewsContent",
+            parent = scrollFrame,
+            width = 430,
+            height = 400,
+            point = {
+                pos = "CENTER",
+                x = 0,
+                y = 0,
+            }
+        })
+        contentFrame:SetBackdropColor(0.1, 0.1, 0.1, 1)
+        scrollFrame:SetScrollChild(contentFrame)
+
+        -- Populate the content frame with news
+        local offset = -10
+        for _, version in ipairs(news) do
+            local versionText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+            versionText:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 10, offset)
+            versionText:SetWidth(400)
+            versionText:SetJustifyH("LEFT")
+            versionText:SetText(version[1])
+            offset = offset - versionText:GetHeight() - 10
+
+            for i = 2, #version do
+                local newsText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                newsText:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 20, offset)
+                newsText:SetWidth(400)
+                newsText:SetJustifyH("LEFT")
+                newsText:SetText(version[i])
+                offset = offset - newsText:GetHeight() - 5
+            end
+            offset = offset - 10
+        end
+
+        contentFrame:SetHeight(math.abs(offset))
+
+        scrollFrame:UpdateScrollChildRect()
+        scrollFrame:SetVerticalScroll(0)
+        scrollFrame:SetScript("OnShow", function(self)
+            self:SetVerticalScroll(0)
+        end)
+    else
+        app.newsFrame:Show()
     end
 end
