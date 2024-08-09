@@ -3,6 +3,10 @@ local COLORS = app.COLORS
 
 local news = {
     {
+        "## V1.5.6",
+        "- Fixed frame cost"
+    },
+    {
         "## V1.5.5",
         "- Fixed settings migration",
         "- Added lfr completion mark",

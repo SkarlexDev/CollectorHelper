@@ -104,6 +104,9 @@ function app:InitMerchantUI()
     MerchantPrevPageButton:HookScript("OnClick", function() app:updateShop() end)
 
     app:InitMerchantUIAH()
+    if settings.showCostFrame == false then
+        app.merchantFrameCost:Hide()
+    end
 end
 
 function app:InitMerchantUIAH()

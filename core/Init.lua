@@ -57,9 +57,6 @@ function app:InitSettings()
     end
     app:MigrateSettings()
     app:initializeLfrCollected()
-    if settings.showCostFrame == false then
-        app.merchantFrameCost:Hide()
-    end
 end
 
 -- ========================
