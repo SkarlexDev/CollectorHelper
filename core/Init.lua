@@ -1,6 +1,6 @@
 local _, app = ...
 
-app.COLLECTORHELPER_VERSION = "1.5.5"
+app.COLLECTORHELPER_VERSION = "1.5.7"
 
 -- ========================
 -- Section: Addon init
