@@ -1,36 +1,36 @@
----@class CH.Point
+---@class App.Point
 ---@field pos string
 ---@field x number
 ---@field y number
 
----@class CH.CustomFontConstructorOptions
+---@class App.FontBuilder
 ---@field parent BackdropTemplate|Frame
 ---@field text string
----@field point CH.Point
+---@field point App.Point
 
-
----@class CH.CustomFrameConstructorOptions
+---@class App.FrameBuilder
 ---@field frameName string
 ---@field parent BackdropTemplate|Frame
 ---@field width number
 ---@field height number
----@field point CH.Point
----@field titleBuilder? CH.CustomFrameconstructorTitle
+---@field point App.Point
+---@field titleBuilder? App.FrameTitle
 
----@class CH.CustomFrameconstructorTitle
+---@class App.FrameTitle
 ---@field text string
----@field point CH.Point
+---@field point App.Point
 
----@class CH.CustomButtonConstructorOptions
+---@class App.ButtonBuilder
 ---@field buttonName string
 ---@field parent BackdropTemplate|Frame
 ---@field width number
 ---@field height number
 ---@field text string
----@field point CH.Point
+---@field point App.Point
 ---@field onClickScript? function
 
----@class CH.ItemDetails
+
+---@class App.ItemDetails
 ---@field itemId number
 ---@field name string
 ---@field link string
@@ -39,12 +39,12 @@
 ---@field bindType number
 
 
----@class CH.CustomScrollBuilder
+---@class App.CustomScrollBuilder
 ---@field parent BackdropTemplate|Frame
 ---@field width number
 ---@field height number
----@field point CH.Point
+---@field point App.Point
 
----@class CH.Btn
+---@class App.Btn
 ---@field Hide? function
 ---@field Show? function
