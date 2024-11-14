@@ -3,6 +3,10 @@ local COLORS = app.COLORS
 
 local news = {
     {
+        "## V1.5.9",
+        "- Interface update"
+    },
+    {
         "## V1.5.8",
         "- Code update"
     },
