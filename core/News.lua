@@ -3,6 +3,11 @@ local COLORS = app.COLORS
 
 local news = {
     {
+        "## 1.6.0",
+        "- Added support for recipes character based",
+        "- Added recipes db until < 11.0.7"
+    },
+    {
         "## V1.5.9",
         "- Interface update"
     },

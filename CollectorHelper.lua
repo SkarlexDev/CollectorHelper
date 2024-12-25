@@ -23,7 +23,7 @@ SlashCmdList["COLLECTORHELPER"] = function(msg, editBox)
       print(app:textCFormat(COLORS.yellow, cmd[1]) .. cmd[2])
     end
   end
-  local command, arg1 = strsplit(" ", msg)
+  local command, _ = strsplit(" ", msg)
   if command == "help" or command == "" then
     showHelp()
   elseif command == "ah" then

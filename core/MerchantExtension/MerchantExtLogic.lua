@@ -148,14 +148,15 @@ function app:merchantItemHideHandler()
                         end
                     end
                 end
-            elseif shopItemState == 10 then
+            elseif shopItemState == 10 or shopItemState == 11 then
                 if not isSLE then
+                    local isRecipe = shopItemState == 11
                     _G["MerchantItem" .. i .. "Name"]:SetText("This item is in your bag")
                     _G["MerchantItem" .. i .. "AltCurrencyFrame"]:Hide()
                     _G["MerchantItem" .. i .. "MoneyFrame"]:Hide()
                     local eqBtn = _G["MerchantItem" .. i .. "ActionFrameBtn"]
                     if not eqBtn then
-                        app:merchantEquipHandler(i)
+                        app:merchantEquipHandler(i, isRecipe)
                     else
                         eqBtn:Show()
                     end
@@ -348,7 +349,7 @@ end
 -- Section: Additional merchant buttons
 -- ========================
 -- Equip item from merchant frame
-function app:merchantEquipHandler(i)
+function app:merchantEquipHandler(i, isRecipe)
     local itemFrame = _G["MerchantItem" .. i .. "ItemButton"]
     local mActionFrame = app:frameBuilder({
         frameName = "MerchantItem" .. i .. "ActionFrameBtn",
@@ -363,78 +364,98 @@ function app:merchantEquipHandler(i)
     })
     mActionFrame:SetBackdropColor(0, 0, 0, 0)
     mActionFrame:SetBackdropBorderColor(0, 0, 0, 0)
+    if isRecipe then
+        local aBtn = app:buttonBuilder({
+            buttonName = "MerchantItem" .. i .. "CHASBtn",
+            parent = mActionFrame,
+            text = "Info",
+            width = 45,
+            height = 22,
+            point = {
+                pos = "BOTTOMLEFT",
+                x = 0,
+                y = 0,
+            }
+        })
+        aBtn:SetScript("OnClick", function(self, button)
+            if button == "LeftButton" then
+               print("CH: After learning this recipe, you need to open the profession tab for the corresponding profession to refresh it. Otherwise, the recipe will still appear in the list, even though you have already learned it.")
+            end
+        end)
 
-    local aBtn = app:buttonBuilder({
-        buttonName = "MerchantItem" .. i .. "CHASBtn",
-        parent = mActionFrame,
-        text = "Sell",
-        width = 45,
-        height = 22,
-        point = {
-            pos = "BOTTOMLEFT",
-            x = 0,
-            y = 0,
-        }
-    })
+    else
+        local aBtn = app:buttonBuilder({
+            buttonName = "MerchantItem" .. i .. "CHASBtn",
+            parent = mActionFrame,
+            text = "Sell",
+            width = 45,
+            height = 22,
+            point = {
+                pos = "BOTTOMLEFT",
+                x = 0,
+                y = 0,
+            }
+        })
 
-    aBtn:SetScript("OnClick", function(self, button)
-        if button == "LeftButton" then
-            local index = tonumber(self:GetName():match("%d+"))
-            local sourceId = merchantBoeIndex[index]
-            local source = app:getItemDetails(sourceId)
-            local slots = app:getItemSlot(source.itemEquipLoc)
-            if slots ~= 0 then
-                -- Find the item in the bags and use it
-                for bag = 0, NUM_BAG_SLOTS do
-                    for slot = 1, C_Container.GetContainerNumSlots(bag) do
-                        local bagItem = C_Container.GetContainerItemInfo(bag, slot)
-                        if bagItem ~= nil then
-                            if bagItem.itemID == sourceId then
-                                C_Container.UseContainerItem(bag, slot)                               
-                                return
+        aBtn:SetScript("OnClick", function(self, button)
+            if button == "LeftButton" then
+                local index = tonumber(self:GetName():match("%d+"))
+                local sourceId = merchantBoeIndex[index]
+                local source = app:getItemDetails(sourceId)
+                local slots = app:getItemSlot(source.itemEquipLoc)
+                if slots ~= 0 then
+                    -- Find the item in the bags and use it
+                    for bag = 0, NUM_BAG_SLOTS do
+                        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+                            local bagItem = C_Container.GetContainerItemInfo(bag, slot)
+                            if bagItem ~= nil then
+                                if bagItem.itemID == sourceId then
+                                    C_Container.UseContainerItem(bag, slot)
+                                    return
+                                end
                             end
                         end
                     end
                 end
             end
-        end
-    end)
+        end)
 
-    local aDBtn = app:buttonBuilder({
-        buttonName = "MerchantItem" .. i .. "CHADBtn",
-        parent = mActionFrame,
-        text = "Destroy",
-        width = 50,
-        height = 22,
-        point = {
-            pos = "BOTTOMRIGHT",
-            x = -8,
-            y = 0,
-        }
-    })
-    aDBtn:SetScript("OnClick", function(self, button)
-        if button == "LeftButton" then
-            local index = tonumber(self:GetName():match("%d+"))
-            local sourceId = merchantBoeIndex[index]
-            local source = app:getItemDetails(sourceId)
-            local slots = app:getItemSlot(source.itemEquipLoc)
-            if slots ~= 0 then
-                -- Find the item in the bags and use it
-                for bag = 0, NUM_BAG_SLOTS do
-                    for slot = 1, C_Container.GetContainerNumSlots(bag) do
-                        local bagItem = C_Container.GetContainerItemInfo(bag, slot)
-                        if bagItem ~= nil then
-                            if bagItem.itemID == sourceId then
-                                --C_Container.UseContainerItem(bag, slot)
-                                ClearCursor()
-                                C_Container.PickupContainerItem(bag, slot)
-                                DeleteCursorItem()
-                                return
+        local aDBtn = app:buttonBuilder({
+            buttonName = "MerchantItem" .. i .. "CHADBtn",
+            parent = mActionFrame,
+            text = "Destroy",
+            width = 50,
+            height = 22,
+            point = {
+                pos = "BOTTOMRIGHT",
+                x = -8,
+                y = 0,
+            }
+        })
+        aDBtn:SetScript("OnClick", function(self, button)
+            if button == "LeftButton" then
+                local index = tonumber(self:GetName():match("%d+"))
+                local sourceId = merchantBoeIndex[index]
+                local source = app:getItemDetails(sourceId)
+                local slots = app:getItemSlot(source.itemEquipLoc)
+                if slots ~= 0 then
+                    -- Find the item in the bags and use it
+                    for bag = 0, NUM_BAG_SLOTS do
+                        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+                            local bagItem = C_Container.GetContainerItemInfo(bag, slot)
+                            if bagItem ~= nil then
+                                if bagItem.itemID == sourceId then
+                                    --C_Container.UseContainerItem(bag, slot)
+                                    ClearCursor()
+                                    C_Container.PickupContainerItem(bag, slot)
+                                    DeleteCursorItem()
+                                    return
+                                end
                             end
                         end
                     end
                 end
             end
-        end
-    end)
+        end)
+    end
 end

@@ -1,5 +1,18 @@
 local _, app = ...
 
+local prof1index, prof2index, _, _, cooking = GetProfessions()
+local function getProfessionInfo(index)
+    if index then
+        return GetProfessionInfo(index)
+    else
+        return "" -- Return empty string if index is nil
+    end
+end
+
+local prof1 = getProfessionInfo(prof1index)
+local prof2 = getProfessionInfo(prof2index)
+local cookingProf = getProfessionInfo(cooking)
+
 -- Check if the given item is owned by the player based on its type (toy, mount, pet, heirloom, etc.)
 function app:checkShopID(source)
     -- Return 0 for false, 1 for true, 2 for ignore
@@ -31,6 +44,19 @@ function app:checkShopID(source)
         end
     end
 
+    local isRecipe = source.itemType == "Recipe"
+    if isRecipe then
+        if app:playerHasItemInBag(source.itemId) == true then
+            return 11
+        end
+        local recipeId = app:searchRecipe(source.itemId)
+        if recipeId ~= nil then
+            --print(recipeId)
+            local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeId)
+            return recipeInfo ~= nil and recipeInfo.learned and 1 or 0
+        end
+    end
+
     -- Check if the item is part of a transmog set or an heirloom and if the player owns it
     local itemSetId = C_Item.GetItemLearnTransmogSet(source.itemId)
     local isItemHeirloom = C_Heirloom.IsItemHeirloom(source.itemId)
@@ -57,6 +83,22 @@ function app:checkShopID(source)
             end
             return r
         end
+    end
+end
+
+function app:searchRecipe(id)
+    local p1 = app.recipes[prof1] or {}
+    local p2 = app.recipes[prof2] or {}
+    local p3 = app.recipes[cookingProf] or {}
+    -- Check if the ID exists in p1, p2, or p3 and return the corresponding value
+    if p1[id] then
+        return p1[id]
+    elseif p2[id] then
+        return p2[id]
+    elseif p3[id] then
+        return p3[id]
+    else
+        return nil
     end
 end
 
