@@ -9,6 +9,10 @@ local cmds = {
     "- Shows auction house shop list"
   },
   {
+    "/ch recipe",
+    "- Shows recipe frame for sync"
+  },
+  {
     "/ch news",
     "- Shows news/changelog frame"
   }
@@ -30,6 +34,8 @@ SlashCmdList["COLLECTORHELPER"] = function(msg, editBox)
     app.ahFrame:Show()
   elseif command == "news" then
     app:ShowNews()
+  elseif command == "recipe" then
+    app:ShowRecipeUI()
   else
     showHelp()
   end

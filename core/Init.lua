@@ -1,6 +1,8 @@
 local _, app = ...
 
-app.COLLECTORHELPER_VERSION = "1.6.0"
+app.COLLECTORHELPER_VERSION = "1.7.0"
+
+local COLORS = app.COLORS
 
 -- ========================
 -- Section: Addon init
@@ -57,6 +59,7 @@ function app:InitSettings()
     end
     app:MigrateSettings()
     app:initializeLfrCollected()
+    app:initializeRecipesCollected()
 end
 
 -- ========================
@@ -88,4 +91,63 @@ function app:initializeLfrCollected()
             end
         end
     end
+end
+
+function app:initializeRecipesCollected()
+    C_Timer.After(0.25, function()
+        local firstTime = false;
+        -- Retrieve the profession indices and cooking profession
+        local prof1index, prof2index, _, _, cooking = GetProfessions()
+
+        -- Function to get profession info based on index
+        local function getProfessionInfo(index)
+            if index then
+                return GetProfessionInfo(index)
+            else
+                return "" -- Return empty string if index is nil
+            end
+        end
+
+        local prof1 = getProfessionInfo(prof1index)
+        local prof2 = getProfessionInfo(prof2index)
+        local cookingProf = getProfessionInfo(cooking)
+
+        -- Get the player's name and realm
+        local playerName = UnitName("player")
+        local realm = GetNormalizedRealmName()
+        local player = playerName .. "-" .. realm
+        app.player = player -- Store the player's name with realm
+
+        -- Initialize recipeCollected if it doesn't exist yet
+        if not recipeCollected then
+            recipeCollected = {}
+        end
+
+        -- Initialize the table for the player if it doesn't exist
+        if not recipeCollected[player] then
+            firstTime = true
+            recipeCollected[player] = {}
+        end
+
+        local function initializeProfessionRecipes(profession)
+            if not recipeCollected[player][profession] then
+                recipeCollected[player][profession] = {
+                    ["collected"] = 0, -- Initialize with 0 collected recipes
+                    ["recipes"] = {},  -- Initialize with an empty table for recipes
+                    ["lastSync"] = "never",
+                    ["total"] = 0
+                }
+            end
+        end
+        initializeProfessionRecipes(prof1)
+        initializeProfessionRecipes(prof2)
+        initializeProfessionRecipes(cookingProf)
+        if firstTime then
+            C_Timer.After(0.50, function()
+                print(app:textCFormat(COLORS.yellow, "CH:"),
+                    "This character dont have any recipe data you may sync it now if you want, you may reopen the popup with /ch recipe command, its important to reload after first sync")
+                app:ShowRecipeUI()
+            end)
+        end
+    end)
 end

@@ -8,6 +8,7 @@ local function getProfessionInfo(index)
         return "" -- Return empty string if index is nil
     end
 end
+local pNameToCheck = ""
 
 local prof1 = getProfessionInfo(prof1index)
 local prof2 = getProfessionInfo(prof2index)
@@ -46,14 +47,21 @@ function app:checkShopID(source)
 
     local isRecipe = source.itemType == "Recipe"
     if isRecipe then
+        app:ShowRecipeUI()
         if app:playerHasItemInBag(source.itemId) == true then
             return 11
         end
         local recipeId = app:searchRecipe(source.itemId)
         if recipeId ~= nil then
-            --print(recipeId)
-            local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeId)
-            return recipeInfo ~= nil and recipeInfo.learned and 1 or 0
+            local player = app.player
+            if player and recipeCollected[player] then
+                local professionData = recipeCollected[player][pNameToCheck]
+                if professionData ~= nil then
+                    local pd = professionData["recipes"][recipeId]
+                    return pd ~= nil and pd and 1 or 0
+                end
+                return 0
+            end
         end
     end
 
@@ -92,12 +100,16 @@ function app:searchRecipe(id)
     local p3 = app.recipes[cookingProf] or {}
     -- Check if the ID exists in p1, p2, or p3 and return the corresponding value
     if p1[id] then
+        pNameToCheck = prof1
         return p1[id]
     elseif p2[id] then
+        pNameToCheck = prof2
         return p2[id]
     elseif p3[id] then
+        pNameToCheck = cookingProf
         return p3[id]
     else
+        pNameToCheck = ""
         return nil
     end
 end

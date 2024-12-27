@@ -379,7 +379,7 @@ function app:merchantEquipHandler(i, isRecipe)
         })
         aBtn:SetScript("OnClick", function(self, button)
             if button == "LeftButton" then
-               print("CH: After learning this recipe, you need to open the profession tab for the corresponding profession to refresh it. Otherwise, the recipe will still appear in the list, even though you have already learned it.")
+                print(app:textCFormat(COLORS.yellow, "CH:"), "The recipe sync popup will also open if the merchant has any recipes. After learning a recipe, it will be synced to prevent it from appearing again with the merchant, you may reopen the popup with /ch recipe command")
             end
         end)
 

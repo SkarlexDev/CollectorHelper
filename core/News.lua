@@ -3,6 +3,14 @@ local COLORS = app.COLORS
 
 local news = {
     {
+        "## 1.7.0",
+        "- Redesigned the initial recipe check logic has been added in 1.6.0",
+        "- Added recipe sync for primary professions and cooking, along with the display of total recipes and collected ones.",
+        "- Added /ch recipe command",
+        "- There may be issues with the recipe check.",
+        "- Any issues or suggestions can be added in the CurseForge addon comment section."
+    },
+    {
         "## 1.6.0",
         "- Added support for recipes character based",
         "- Added recipes db until < 11.0.7"
