@@ -410,7 +410,7 @@ function app:ShowRecipeUI()
 
                 -- Fetch the collected and lastSync data for the profession from recipeCollected[app.player]
                 local player = app.player
-                if player and recipeCollected[player] then
+                if player and recipeCollected[player] ~= nil then
                     local professionData = recipeCollected[player][name] -- Use the profession name here
                     if professionData then
                         local collected = professionData["collected"] or 0
@@ -502,7 +502,7 @@ function app:ShowRecipeUI()
                             -- Now, populate the recipes for this profession
                             local player = app.player
                             local professionName = self.name -- Get the profession name (e.g., Jewelcrafting)
-                            if player and recipeCollected[player] and professionName then
+                            if player and recipeCollected[player] ~= nil and professionName then
                                 local professionData = recipeCollected[player][professionName]
                                 if professionData then
                                     -- Loop through all recipe IDs and update the profession data

@@ -1,18 +1,5 @@
 local _, app = ...
-
-local prof1index, prof2index, _, _, cooking = GetProfessions()
-local function getProfessionInfo(index)
-    if index then
-        return GetProfessionInfo(index)
-    else
-        return "" -- Return empty string if index is nil
-    end
-end
 local pNameToCheck = ""
-
-local prof1 = getProfessionInfo(prof1index)
-local prof2 = getProfessionInfo(prof2index)
-local cookingProf = getProfessionInfo(cooking)
 
 -- Check if the given item is owned by the player based on its type (toy, mount, pet, heirloom, etc.)
 function app:checkShopID(source)
@@ -95,19 +82,25 @@ function app:checkShopID(source)
 end
 
 function app:searchRecipe(id)
+    local prof1index, prof2index, _, _, cooking = GetProfessions()
+    local prof1 = GetProfessionInfo(prof1index)
+    local prof2 = GetProfessionInfo(prof2index)
+    local cookingProf = GetProfessionInfo(cooking)
     local p1 = app.recipes[prof1] or {}
     local p2 = app.recipes[prof2] or {}
     local p3 = app.recipes[cookingProf] or {}
+
+    local recipeItemId = tonumber(id)
     -- Check if the ID exists in p1, p2, or p3 and return the corresponding value
-    if p1[id] then
+    if p1[recipeItemId] then
         pNameToCheck = prof1
-        return p1[id]
-    elseif p2[id] then
+        return p1[recipeItemId]
+    elseif p2[recipeItemId] then
         pNameToCheck = prof2
-        return p2[id]
-    elseif p3[id] then
+        return p2[recipeItemId]
+    elseif p3[recipeItemId] then
         pNameToCheck = cookingProf
-        return p3[id]
+        return p3[recipeItemId]
     else
         pNameToCheck = ""
         return nil
