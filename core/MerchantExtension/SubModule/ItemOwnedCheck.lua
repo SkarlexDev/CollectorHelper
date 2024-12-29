@@ -83,9 +83,18 @@ end
 
 function app:searchRecipe(id)
     local prof1index, prof2index, _, _, cooking = GetProfessions()
-    local prof1 = GetProfessionInfo(prof1index)
-    local prof2 = GetProfessionInfo(prof2index)
-    local cookingProf = GetProfessionInfo(cooking)
+    local prof1 = ""
+    if prof1index ~= nil then
+        prof1 = GetProfessionInfo(prof1index)
+    end
+    local prof2 = ""
+    if prof2index ~= nil then
+        prof2 = GetProfessionInfo(prof2index)
+    end
+    local cookingProf = ""
+    if cooking ~= nil then
+        cookingProf = GetProfessionInfo(cooking)
+    end
     local p1 = app.recipes[prof1] or {}
     local p2 = app.recipes[prof2] or {}
     local p3 = app.recipes[cookingProf] or {}
