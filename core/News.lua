@@ -3,6 +3,10 @@ local COLORS = app.COLORS
 
 local news = {
     {
+        "## 1.7.1",
+        "Fixed nil error when primary profession not learned"
+    },
+    {
         "## 1.7.0",
         "- Redesigned the initial recipe check logic has been added in 1.6.0",
         "- Added recipe sync for primary professions and cooking, along with the display of total recipes and collected ones.",

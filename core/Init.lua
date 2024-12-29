@@ -1,6 +1,6 @@
 local _, app = ...
 
-app.COLLECTORHELPER_VERSION = "1.7.0"
+app.COLLECTORHELPER_VERSION = "1.7.1"
 
 local COLORS = app.COLORS
 
