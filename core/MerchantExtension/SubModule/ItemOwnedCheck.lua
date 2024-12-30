@@ -34,7 +34,7 @@ function app:checkShopID(source)
 
     local isRecipe = source.itemType == "Recipe"
     if isRecipe then
-        app:ShowRecipeUI()
+        --app:ShowRecipeUI()
         if app:playerHasItemInBag(source.itemId) == true then
             return 11
         end

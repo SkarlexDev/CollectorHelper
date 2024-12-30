@@ -43,6 +43,23 @@ function app:InitUI()
                 end
             end
         })
+        app:buttonBuilder({
+            buttonName = "Collector_MerchantToggle",
+            parent = _G["MerchantFrameTab1"],
+            text = "Sync Recipe",
+            width = 90,
+            height = 25,
+            point = {
+                pos = "LEFT",
+                x = 92,
+                y = -28,
+            },
+            onClickScript = function(_, button)
+                if button == "LeftButton" then
+                    app:ShowRecipeUI()
+                end
+            end
+        })
     end
 end
 

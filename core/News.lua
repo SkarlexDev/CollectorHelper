@@ -3,6 +3,12 @@ local COLORS = app.COLORS
 
 local news = {
     {
+        "## 1.7.2",
+        "- Removed the automatic opening of recipe sync when vendor gossip is opened.",
+        "- Added a Sync Recipe button to the merchant frame."
+
+    },
+    {
         "## 1.7.1",
         "Fixed nil error when primary profession not learned"
     },
