@@ -1,53 +1,76 @@
-local _, app = ...
-local COLORS = app.COLORS
-local cmds = {
-  {
-    "/ch help",
-    "- Displays this help or command list." },
-  {
-    "/ch ah",
-    "- Shows auction house shop list"
-  },
-  {
-    "/ch recipe",
-    "- Shows recipe frame for sync"
-  },
-  {
-    "/ch news",
-    "- Shows news/changelog frame"
-  }
+-- ============================================================================
+-- CollectorHelper --
+-- ============================================================================
+
+local CollectorHelper = LibStub("AceAddon-3.0"):NewAddon("CollectorHelper", "AceConsole-3.0", "AceEvent-3.0")
+
+-- ============================================================================
+-- Command help table for the slash command "/ch"
+-- ============================================================================
+local commands = {
+    { cmd = "help",   desc = "- Displays this help or command list." },
+    { cmd = "ah",     desc = "- Shows auction house shop list" },
+    { cmd = "recipe", desc = "- Shows recipe frame for sync" },
+    { cmd = "news",   desc = "- Shows news/changelog frame" },
 }
 
--- Slash command to toggle the AddOn
-SLASH_COLLECTORHELPER1 = "/ch"
-SlashCmdList["COLLECTORHELPER"] = function(msg, editBox)
-  local showHelp = function()
-    print("Displaying command list:")
-    for _, cmd in ipairs(cmds) do
-      print(app:textCFormat(COLORS.yellow, cmd[1]) .. cmd[2])
-    end
-  end
-  local command, _ = strsplit(" ", msg)
-  if command == "help" or command == "" then
-    showHelp()
-  elseif command == "ah" then
-    app.ahFrame:Show()
-  elseif command == "news" then
-    app:ShowNews()
-  elseif command == "recipe" then
-    app:ShowRecipeUI()
-  else
-    showHelp()
-  end
+
+function CollectorHelper:OnInitialize()
+    self.db = LibStub("AceDB-3.0"):New("CollectorHelperDB", defaults, true)
+    self:RegisterChatCommand("ch", "HandleChatCommand")
+
+    local version = C_AddOns.GetAddOnMetadata("CollectorHelper", "Version")
+    self.db.version = version
+
+    self:InitDB()
+    self:InitSettings()
 end
 
--- ========================
--- Section: Addon RegisterEvent
--- ========================
-local CollectorHelper = CreateFrame("Frame")
-CollectorHelper:RegisterEvent("ADDON_LOADED")
-CollectorHelper:SetScript("OnEvent", function(self, event, arg1, arg2, arg3)
-  if event == "ADDON_LOADED" and arg1 == "CollectorHelper" then
-    app:InitAddon()
-  end
-end)
+function CollectorHelper:OnEnable()
+    --self:Print("OnInitialize fired. Welcome! Version: " .. self.db.version)
+    self:Init()
+end
+
+function CollectorHelper:OnDisable()
+    --self:Print("Addon Disabled!")
+end
+
+-- ============================================================================
+-- Command Handle
+-- ============================================================================
+function CollectorHelper:HandleChatCommand(input)
+    local command, _ = strsplit(" ", input, 2)
+    command = command and command:lower() or ""
+    if command == "" or command == "help" then
+        self:ShowHelpCmd()
+    elseif command == "ah" then
+        self.ahFrame:Show()
+    elseif command == "recipe" then
+        self:ShowRecipeUI(true)
+    elseif command == "news" then
+        self:ShowNews()
+    else
+        self:Print("Unknown command: " .. command)
+        self:ShowHelpCmd()
+    end
+end
+
+-- ============================================================================
+-- Commands
+-- ============================================================================
+function CollectorHelper:ShowHelpCmd()
+    self:Print("Displaying command list:")
+    for _, entry in ipairs(commands) do
+        -- You can use color codes if desired. For now we simply format the string.
+        self:Print(string.format("/ch %s %s", entry.cmd, entry.desc))
+    end
+end
+-- ============================================================================
+-- Elvui check
+-- ============================================================================
+
+function CollectorHelper:IsElvUI()
+    --return (C_AddOns.IsAddOnLoaded("ElvUI") or false)
+end
+
+_G.CollectorHelper = CollectorHelper
