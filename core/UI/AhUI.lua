@@ -4,7 +4,7 @@ local COLORS = CollectorHelper.COLORS or {}
 -- =========================================================================
 -- AH frame
 -- =========================================================================
-function CollectorHelper:InitAHUI()   
+function CollectorHelper:InitAHUI()
     -- Merchant frame AH extension
     self.ahFrame = self:frameBuilder({
         frameName = "CollectorHelper_MerchantSource_AH",
@@ -38,8 +38,10 @@ function CollectorHelper:InitAHUI()
     -- Scrollable content for AH list
     self.ahScrollableContent = self:CreateScrollableContent({
         parent = self.ahFrame,
-        width = 280,
+        width = 250,
+        xwidth = 280,
         height = 320,
+        xpos = 25,
         point = {
             pos = "TOPLEFT",
             x = 15,

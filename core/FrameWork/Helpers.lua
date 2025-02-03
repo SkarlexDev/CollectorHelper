@@ -68,14 +68,24 @@ end
 -- ============================================================================
 
 function CollectorHelper:CreateRow(index, item, data, params, scrollChild, UpdateRows)
-    local row = CreateFrame("Frame", nil, scrollChild)
-    row:SetSize(params.xwidth or params.width, 20)
-    row:SetPoint("TOPLEFT", params.xpos or 10, -(index - 1) * 21)
+    local row = CreateFrame("Frame", nil, scrollChild, "BackdropTemplate")
+    row:SetSize(params.width, 20)
+    row:SetPoint("TOPLEFT", params.xpos or 10, -(index - 1) * 22)
+
+    row:SetBackdrop({
+        bgFile = params.bgFile or "Interface\\Buttons\\WHITE8x8",
+        edgeFile = params.edgeFile or "Interface\\Buttons\\WHITE8x8",
+        tileEdge = false,
+        edgeSize = params.edgeSize or 1,
+        insets = { left = 1, right = 1, top = 1, bottom = 1 }
+    })
+    row:SetBackdropColor(0.05, 0.05, 0.05, 0.95)
+    row:SetBackdropBorderColor(0, 0, 0, 1)
 
     -- Create button with BackdropTemplate
     local btnP = CreateFrame("Button", nil, row, "BackdropTemplate")
     btnP:RegisterForClicks("LeftButtonDown", "RightButtonDown")
-    btnP:SetWidth(params.width - 20)
+    btnP:SetWidth(params.width)
     btnP:SetHeight(20)
     btnP:SetPoint("CENTER", 0, 0)
 
@@ -83,12 +93,28 @@ function CollectorHelper:CreateRow(index, item, data, params, scrollChild, Updat
     btnP:SetBackdrop({
         bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
         edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        tile = true,
-        tileSize = 32,
-        edgeSize = 32,
-        insets = { left = 11, right = 12, top = 12, bottom = 11 }
+        tile = false,
+        tileSize = 1,
+        edgeSize = 1,
+        insets = { left = 1, right = 1, top = 1, bottom = 1 }
     })
     btnP:SetBackdropColor(0.102, 0.102, 0.102, 1)
+
+    btnP:SetScript("OnEnter", function()
+        row:SetBackdropColor(0.5, 0.5, 0.5, 1) -- Light gray highlight
+    end)
+
+    btnP:SetScript("OnLeave", function()
+        row:SetBackdropColor(0.05, 0.05, 0.05, 0.95)
+    end)
+
+    btnP:HookScript("OnClick", function(_, button)
+        if button == "LeftButton" then
+            if item.linkItem then
+                self:Print(item.linkItem)
+            end
+        end
+    end)
 
     -- Skin for ElvUI
     pcall(function()
@@ -101,7 +127,7 @@ function CollectorHelper:CreateRow(index, item, data, params, scrollChild, Updat
 
     local rowText = btnP:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     rowText:SetJustifyH("LEFT")
-    rowText:SetPoint("LEFT")
+    rowText:SetPoint("LEFT", 2 , 0)
     rowText:SetText(item.display)
 
     -- Additional item details (percentage, quantity, clear button)
@@ -114,23 +140,6 @@ function CollectorHelper:CreateRow(index, item, data, params, scrollChild, Updat
         local percentage = btn:CreateFontString(nil, "ARTWORK", "GameFontNormal")
         percentage:SetPoint("LEFT")
         percentage:SetText(string.format("%.2f%%", item.percentage))
-
-        btn:SetScript("OnEnter", function()
-            btnP:SetBackdropColor(0.5, 0.5, 0.5, 1) -- Light gray highlight
-            GameTooltip:SetOwner(params.parent, "ANCHOR_RIGHT", 0, -34)
-            GameTooltip:SetText(item.display, 1, 1, 1)
-            if item.linkItem then
-                GameTooltip:SetHyperlink(item.linkItem)
-            else
-                GameTooltip:AddLine(item.tooltip, nil, nil, nil, true)
-            end
-            GameTooltip:Show()
-        end)
-
-        btn:SetScript("OnLeave", function()
-            btnP:SetBackdropColor(0.102, 0.102, 0.102, 1)
-            GameTooltip:Hide()
-        end)
     end
 
     if item.quantity then
@@ -142,23 +151,6 @@ function CollectorHelper:CreateRow(index, item, data, params, scrollChild, Updat
         local quantity = btn:CreateFontString(nil, "ARTWORK", "GameFontNormal")
         quantity:SetPoint("LEFT")
         quantity:SetText(item.quantity)
-
-        btn:SetScript("OnEnter", function()
-            btnP:SetBackdropColor(0.5, 0.5, 0.5, 1) -- Light gray highlight
-            GameTooltip:SetOwner(params.parent, "ANCHOR_RIGHT", 0, -34)
-            GameTooltip:SetText(item.display, 1, 1, 1)
-            if item.linkItem then
-                GameTooltip:SetHyperlink(item.linkItem)
-            else
-                GameTooltip:AddLine(item.tooltip, nil, nil, nil, true)
-            end
-            GameTooltip:Show()
-        end)
-
-        btn:SetScript("OnLeave", function()
-            btnP:SetBackdropColor(0.102, 0.102, 0.102, 1)
-            GameTooltip:Hide()
-        end)
     end
 
     if item.clear then
@@ -195,42 +187,18 @@ function CollectorHelper:CreateRow(index, item, data, params, scrollChild, Updat
         end)
     end
 
-    btnP:SetScript("OnEnter", function()
-        btnP:SetBackdropColor(0.5, 0.5, 0.5, 1) -- Light gray highlight
-        GameTooltip:SetOwner(params.parent, "ANCHOR_RIGHT", 0, -34)
-
-        GameTooltip:SetText(item.display, 1, 1, 1)
-        if item.linkItem then
-            GameTooltip:SetHyperlink(item.linkItem)
-        else
-            --GameTooltip:AddLine(item.display, nil, nil, nil, true)
-        end
-        GameTooltip:Show()
-    end)
-
-    btnP:HookScript("OnClick", function(_, button)
-        if button == "LeftButton" then
-            if item.linkItem then
-                self:Print(item.linkItem)
-            end
-        end
-    end)
-
-    btnP:SetScript("OnLeave", function()
-        btnP:SetBackdropColor(0.102, 0.102, 0.102, 1)
-        GameTooltip:Hide()
-    end)
-
     return row
 end
 
+
 function CollectorHelper:CreateScrollableContent(params)
     local sf = CreateFrame("ScrollFrame", nil, params.parent, "UIPanelScrollFrameTemplate")
-    sf:SetSize(params.width, params.height)
+    sf:SetSize(params.xwidth or params.width, params.height)
     sf:SetPoint(params.point.pos, params.point.x, params.point.y)
 
+
     local sc = CreateFrame("Frame", nil, sf)
-    sc:SetSize(params.width, 1)
+    sc:SetSize(params.xwidth or params.width, 1)
     sf:SetScrollChild(sc)
 
     local rows = {}
@@ -244,7 +212,6 @@ function CollectorHelper:CreateScrollableContent(params)
         end
     end
 
-    -- Function to update rows in the scrollable content
     local function UpdateRows(data)
         -- Clear existing rows
         for _, row in ipairs(rows) do
@@ -261,9 +228,9 @@ function CollectorHelper:CreateScrollableContent(params)
         updateScroll(data)
     end
 
-    -- Return the scrollable content and its update function
     return {
         scrollFrame = sf,
         UpdateRows = UpdateRows
     }
 end
+

@@ -3,6 +3,10 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
+            "## 2.0.1",
+            "- Main frame & scroll rows visual update"
+        },
+        {
             "## 2.0.0",
             "- Added ace3 lib.",
             "- Refactored code structure.",

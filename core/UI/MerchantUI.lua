@@ -74,10 +74,9 @@ function CollectorHelper:InitMerchantUI()
     -- Scrollable content cost
     self.mainScrollableContent = self:CreateScrollableContent({
         parent = innerFrame,
-        width = 290,
+        width = 280,
         height = 260,
-        xpos = -2,
-        xwidth = 300,
+        xpos = 0,
         point = {
             pos = "CENTER",
             x = -11,
@@ -98,10 +97,10 @@ function CollectorHelper:InitMerchantUI()
             x = 0,
             y = -307,
         },
-        bgColorR = 0.1176,
-        bgColorG = 0.1176,
-        bgColorB = 0.1176,
-        bgAlpha = 0.80
+        bgColorR = 0,
+        bgColorG = 0,
+        bgColorB = 0,
+        bgAlpha = 0.251
     })
 
     -- ========================

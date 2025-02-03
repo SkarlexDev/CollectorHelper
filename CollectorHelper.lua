@@ -61,7 +61,6 @@ end
 function CollectorHelper:ShowHelpCmd()
     self:Print("Displaying command list:")
     for _, entry in ipairs(commands) do
-        -- You can use color codes if desired. For now we simply format the string.
         self:Print(string.format("/ch %s %s", entry.cmd, entry.desc))
     end
 end
