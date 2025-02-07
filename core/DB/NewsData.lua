@@ -3,6 +3,10 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
+            "## 2.0.2",
+            "- Added auto sync recipe on learn"
+        },
+        {
             "## 2.0.1",
             "- Main frame & scroll rows visual update"
         },

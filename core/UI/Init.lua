@@ -6,6 +6,32 @@ function CollectorHelper:Init()
     self:InitLfrGossip()
     self:InitRecipeUI()
     self:InitNews()
+
+    -- set auto sync
+    local recipeFrame = CreateFrame("Frame")
+    recipeFrame:RegisterEvent("NEW_RECIPE_LEARNED")
+
+    recipeFrame:SetScript("OnEvent", function(_, event, recipeID)
+        if event == "NEW_RECIPE_LEARNED" then
+            local info = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
+            if info ~= nil and info.parentProfessionName ~= nil then
+                local player = CollectorHelper.player
+                if player and recipeCollected[player] ~= nil then
+                    local professionData = recipeCollected[player][info.parentProfessionName]
+                    if professionData then
+                        professionData["recipes"][recipeID] = true;
+
+                        local currentTime = date("%Y-%m-%d %H:%M:%S")
+                        professionData["lastSync"] = currentTime
+                        local collectedRecipes = professionData["collected"]
+                        collectedRecipes = collectedRecipes + 1
+                        professionData["collected"] = collectedRecipes
+                        CollectorHelper:ShowRecipeUI(false)
+                    end
+                end
+            end
+        end
+    end)
 end
 
 -- ============================================================================

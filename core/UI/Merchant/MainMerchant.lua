@@ -351,7 +351,7 @@ function CollectorHelper:merchantEquipHandler(i, isRecipe)
         aBtn:SetScript("OnClick", function(_, button)
             if button == "LeftButton" then
                 CollectorHelper:Print(
-                    "You may reopen the popup with /ch recipe command aand sync")
+                    "Auto-sync for recipes is enabled by default—just learn the recipe! =) If anything goes wrong, you can manually sync with /ch recipe")
             end
         end)
     else
