@@ -1,8 +1,0 @@
-package-as: CollectorHelper
-
-ignore:
-    - .github
-    - .gitignore
-    - .pkgmeta
-    - README.md
-enable-toc-creation: yes
