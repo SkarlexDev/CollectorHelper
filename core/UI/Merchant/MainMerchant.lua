@@ -336,10 +336,10 @@ function CollectorHelper:merchantEquipHandler(i, isRecipe)
     mActionFrame:SetBackdropColor(0, 0, 0, 0)
     mActionFrame:SetBackdropBorderColor(0, 0, 0, 0)
     if isRecipe then
-        local aBtn = CollectorHelper:buttonBuilder({
+        local aBtn = CollectorHelper:buttonBuilderInsecure({
             buttonName = "MerchantItem" .. i .. "CHASBtn",
             parent = mActionFrame,
-            text = "Info",
+            text = "Learn",
             width = 45,
             height = 22,
             point = {
@@ -348,12 +348,8 @@ function CollectorHelper:merchantEquipHandler(i, isRecipe)
                 y = 0,
             }
         })
-        aBtn:SetScript("OnClick", function(_, button)
-            if button == "LeftButton" then
-                CollectorHelper:Print(
-                    "Auto-sync for recipes is enabled by default—just learn the recipe! =) If anything goes wrong, you can manually sync with /ch recipe")
-            end
-        end)
+        local sourceId = CollectorHelper.db.merchantBoeIndex[i]
+        aBtn:SetAttribute("item", "item:" .. sourceId);
     else
         local aBtn = CollectorHelper:buttonBuilder({
             buttonName = "MerchantItem" .. i .. "CHASBtn",

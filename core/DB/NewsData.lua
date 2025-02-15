@@ -3,6 +3,10 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
+            "## 2.0.4",
+            "- Updated merchant learn button for recipes"
+        },
+        {
             "## 2.0.3",
             "- Added Zul'Grurub recipes"
         },

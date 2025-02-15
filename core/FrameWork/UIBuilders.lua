@@ -49,6 +49,24 @@ function CollectorHelper:frameBuilder(params)
     return f
 end
 
+function CollectorHelper:buttonBuilderInsecure(params)
+    local b = CreateFrame("Button", params.buttonName, params.parent, "UIPanelButtonTemplate, InsecureActionButtonTemplate");
+    b:RegisterForClicks("AnyUp", "AnyDown");
+    b:SetAttribute("type", "item");
+    self:configureFrame(b, params)
+    b:SetText(params.text or "")
+    if ElvUI then
+        pcall(function()
+            local E, S = ElvUI[1], ElvUI[1]:GetModule("Skins")
+            if E.private.skins.blizzard.enable and E.private.skins.blizzard.merchant then
+                S:HandleButton(b)
+            end
+        end)
+    end
+
+    return b
+end
+
 -- ============================================================================
 -- Creates and configures a Button with optional ElvUI skinning.
 -- ============================================================================
