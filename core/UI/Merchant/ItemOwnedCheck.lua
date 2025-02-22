@@ -75,6 +75,11 @@ function CollectorHelper:checkShopID(source)
                     return 10
                 end
             end
+            -- check for cosmetic
+            -- it equips the cosmetic but not learn
+            --if source.itemSubType == "Cosmetic" and CollectorHelper:playerHasItemInBag(source.itemId) == true then
+            --    return 12
+            --end
             return r
         end
     end

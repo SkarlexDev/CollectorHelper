@@ -8,10 +8,11 @@ local CollectorHelper = LibStub("AceAddon-3.0"):NewAddon("CollectorHelper", "Ace
 -- Command help table for the slash command "/ch"
 -- ============================================================================
 local commands = {
-    { cmd = "help",   desc = "- Displays this help or command list." },
-    { cmd = "ah",     desc = "- Shows auction house shop list" },
-    { cmd = "recipe", desc = "- Shows recipe frame for sync" },
-    { cmd = "news",   desc = "- Shows news/changelog frame" },
+    { cmd = "help",     desc = "- Displays this help or command list." },
+    { cmd = "options",  desc = "- Opens config panel." },
+    { cmd = "ah",       desc = "- Shows auction house shop list" },
+    { cmd = "recipe",   desc = "- Shows recipe frame for sync" },
+    { cmd = "news",     desc = "- Shows news/changelog frame" },
 }
 
 
@@ -49,6 +50,8 @@ function CollectorHelper:HandleChatCommand(input)
         self:ShowRecipeUI(true)
     elseif command == "news" then
         self:ShowNews()
+    elseif command == "options" then
+        Settings.OpenToCategory(self.MainPanel)
     else
         self:Print("Unknown command: " .. command)
         self:ShowHelpCmd()

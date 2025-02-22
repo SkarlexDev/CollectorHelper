@@ -50,13 +50,14 @@ end
 -- ============================================================================
 function CollectorHelper:getItemDetails(itemInfo)
     C_Item.RequestLoadItemDataByID(itemInfo)
-    local name, link, quality, _, _, type, _, _, equipLoc, _, _, _, _, bindType = C_Item.GetItemInfo(itemInfo)
+    local name, link, quality, _, _, type, itemSubType , _, equipLoc, _, _, _, _, bindType = C_Item.GetItemInfo(itemInfo)
 
     return {
         itemId = itemInfo,
         name = name,
         link = link,
         itemType = type,
+        itemSubType = itemSubType,
         itemEquipLoc = equipLoc,
         bindType = bindType,
         itemQuality = quality

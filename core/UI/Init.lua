@@ -7,7 +7,15 @@ function CollectorHelper:Init()
     self:InitRecipeUI()
     self:InitNews()
 
-    -- set auto sync
+    self:InitOptionsPanel()
+    self:InitAutoSync()
+end
+
+
+-- ============================================================================
+-- Auto sync new recipe data on learn
+-- ============================================================================
+function CollectorHelper:InitAutoSync()
     local recipeFrame = CreateFrame("Frame")
     recipeFrame:RegisterEvent("NEW_RECIPE_LEARNED")
 

@@ -120,15 +120,15 @@ function CollectorHelper:merchantItemHideHandler()
                         end
                     end
                 end
-            elseif shopItemState == 10 or shopItemState == 11 then
+            elseif shopItemState == 10 or shopItemState == 11 or shopItemState == 12 then
                 if not isSLE then
-                    local isRecipe = shopItemState == 11
+                    local isRecipeOrCosmetic = shopItemState == 11 or shopItemState == 12
                     _G["MerchantItem" .. i .. "Name"]:SetText("This item is in your bag")
                     _G["MerchantItem" .. i .. "AltCurrencyFrame"]:Hide()
                     _G["MerchantItem" .. i .. "MoneyFrame"]:Hide()
                     local eqBtn = _G["MerchantItem" .. i .. "ActionFrameBtn"]
                     if not eqBtn then
-                        CollectorHelper:merchantEquipHandler(i, isRecipe)
+                        CollectorHelper:merchantEquipHandler(i, isRecipeOrCosmetic)
                     else
                         eqBtn:Show()
                     end
@@ -320,7 +320,7 @@ end
 -- ============================================================================
 -- Equip item from merchant frame
 -- ============================================================================
-function CollectorHelper:merchantEquipHandler(i, isRecipe)
+function CollectorHelper:merchantEquipHandler(i, isRecipeOrCosmetic)
     local itemFrame = _G["MerchantItem" .. i .. "ItemButton"]
     local mActionFrame = CollectorHelper:frameBuilder({
         frameName = "MerchantItem" .. i .. "ActionFrameBtn",
@@ -335,7 +335,7 @@ function CollectorHelper:merchantEquipHandler(i, isRecipe)
     })
     mActionFrame:SetBackdropColor(0, 0, 0, 0)
     mActionFrame:SetBackdropBorderColor(0, 0, 0, 0)
-    if isRecipe then
+    if isRecipeOrCosmetic then
         local aBtn = CollectorHelper:buttonBuilderInsecure({
             buttonName = "MerchantItem" .. i .. "CHASBtn",
             parent = mActionFrame,

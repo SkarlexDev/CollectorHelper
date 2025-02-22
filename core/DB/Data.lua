@@ -1848,7 +1848,7 @@ function CollectorHelper:InitRecipeData()
             -- none
         },
         ["Inscription"] = {
-            [111923] = 161789,
+            --[111923] = 161789,
             [118605] = 166356,
             [118606] = 163294,
             [118614] = 166432,

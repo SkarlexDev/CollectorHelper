@@ -13,4 +13,8 @@
 	<Script file="Core/UI/RecipeUI.lua"/>
 	<Script file="Core/UI/GossipLFR/MainGossip.lua"/>
 	<Script file="Core/UI/NewsUI.lua"/>
+
+	<Script file="Core/UI/OptionsPanel/OptionsPanel.lua"/>
+	<Script file="Core/UI/OptionsPanel/Panels/MainPanelUI.lua"/>
+	<Script file="Core/UI/OptionsPanel/Panels/CreateRecipeOptions.lua"/>
 </Ui>
