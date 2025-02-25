@@ -121,8 +121,8 @@ function CollectorHelper:merchantItemHideHandler()
                     end
                 end
             elseif shopItemState == 10 or shopItemState == 11 or shopItemState == 12 then
+                local isRecipeOrCosmetic = shopItemState == 11 or shopItemState == 12
                 if not isSLE then
-                    local isRecipeOrCosmetic = shopItemState == 11 or shopItemState == 12
                     _G["MerchantItem" .. i .. "Name"]:SetText("This item is in your bag")
                     _G["MerchantItem" .. i .. "AltCurrencyFrame"]:Hide()
                     _G["MerchantItem" .. i .. "MoneyFrame"]:Hide()
@@ -131,6 +131,10 @@ function CollectorHelper:merchantItemHideHandler()
                         CollectorHelper:merchantEquipHandler(i, isRecipeOrCosmetic)
                     else
                         eqBtn:Show()
+                        if isRecipeOrCosmetic then
+                            local sourceId = CollectorHelper.db.merchantBoeIndex[i]
+                            eqBtn:SetAttribute("item", "item:" .. sourceId);
+                        end
                     end
                 else
                     for jk = 1, 10 do
