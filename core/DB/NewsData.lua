@@ -3,6 +3,10 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
+            "##2.0.7",
+            "- Version update"
+        },
+        {
             "##2.0.6",
             "- Fixed recipe learn merchant button for multiple pages"
         },
