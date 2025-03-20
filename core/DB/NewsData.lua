@@ -3,6 +3,10 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
+            "##2.0.8",
+            "- Added recipes list view & delete option"
+        },
+        {
             "##2.0.7",
             "- Version update"
         },
