@@ -10,6 +10,7 @@ function CollectorHelper:InitSettings()
             hideMerchantOwned = true,
             showCostFrame = true,
             autoShowNews = true,
+            softCollect = false,
             version = "0"
         }
     end
@@ -45,6 +46,9 @@ function CollectorHelper:initializeSettings()
     end
     if s.version == nil then
         s.version = "0"
+    end
+    if s.softCollect == nil then
+        s.softCollect = false
     end
 end
 

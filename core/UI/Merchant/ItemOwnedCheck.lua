@@ -67,7 +67,17 @@ function CollectorHelper:checkShopID(source)
                 return C_TransmogCollection.PlayerHasTransmogItemModifiedAppearance(sourceID) and 1 or 0
             else
                 return 2 -- ignore item
+            end        
+        elseif settings.softCollect then
+            local sourceID = CollectorHelper:GetSourceID(source.link)
+            if sourceID == nil then
+                return 2 -- ignore item
             end
+            local info = C_TransmogCollection.GetAppearanceInfoBySource(sourceID)
+            if info == nil then
+                return 2 -- ignore item
+            end
+            return info.sourceIsKnown and 1 or 0
         else
             local r = C_TransmogCollection.PlayerHasTransmog(source.itemId) and 1 or 0
             if r == 0 and source.bindType == 2 then

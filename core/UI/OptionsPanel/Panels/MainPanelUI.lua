@@ -66,6 +66,20 @@ function CollectorHelper:CreateGeneralOptions()
                 order = 5,
             },
             -------------------------------------------------
+            softCollect = {
+                type = "toggle",
+                name = "Soft Collect",
+                desc =
+                "Toggle soft collect mode, if you have collected the item from other source and don't want to collect it again.",
+                get = function()
+                    return settings.softCollect
+                end,
+                set = function(_, value)
+                    settings.softCollect = value
+                end,
+                width = "full",
+                order = 6,
+            },
         }
     }
     return generalOptions

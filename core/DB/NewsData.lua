@@ -3,6 +3,11 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
+            "##2.0.9",
+            "- Added soft collect option to hide owned items from merchant if other source is already collected",
+            "- Added addon panel see '/ch options' command"
+        },
+        {
             "##2.0.8",
             "- Added recipes list view & delete option"
         },
