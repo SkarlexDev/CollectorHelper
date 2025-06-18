@@ -50,7 +50,8 @@ function CollectorHelper:frameBuilder(params)
 end
 
 function CollectorHelper:buttonBuilderInsecure(params)
-    local b = CreateFrame("Button", params.buttonName, params.parent, "UIPanelButtonTemplate, InsecureActionButtonTemplate");
+    local b = CreateFrame("Button", params.buttonName, params.parent,
+    "UIPanelButtonTemplate, InsecureActionButtonTemplate");
     b:RegisterForClicks("AnyUp", "AnyDown");
     b:SetAttribute("type", "item");
     self:configureFrame(b, params)

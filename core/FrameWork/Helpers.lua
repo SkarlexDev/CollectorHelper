@@ -50,7 +50,7 @@ end
 -- ============================================================================
 function CollectorHelper:getItemDetails(itemInfo)
     C_Item.RequestLoadItemDataByID(itemInfo)
-    local name, link, quality, _, _, type, itemSubType , _, equipLoc, _, _, _, _, bindType = C_Item.GetItemInfo(itemInfo)
+    local name, link, quality, _, _, type, itemSubType, _, equipLoc, _, _, _, _, bindType = C_Item.GetItemInfo(itemInfo)
 
     return {
         itemId = itemInfo,
@@ -128,7 +128,7 @@ function CollectorHelper:CreateRow(index, item, data, params, scrollChild, Updat
 
     local rowText = btnP:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     rowText:SetJustifyH("LEFT")
-    rowText:SetPoint("LEFT", 2 , 0)
+    rowText:SetPoint("LEFT", 2, 0)
     rowText:SetText(item.display)
 
     -- Additional item details (percentage, quantity, clear button)
@@ -191,7 +191,6 @@ function CollectorHelper:CreateRow(index, item, data, params, scrollChild, Updat
     return row
 end
 
-
 function CollectorHelper:CreateScrollableContent(params)
     local sf = CreateFrame("ScrollFrame", nil, params.parent, "UIPanelScrollFrameTemplate")
     sf:SetSize(params.xwidth or params.width, params.height)
@@ -235,3 +234,27 @@ function CollectorHelper:CreateScrollableContent(params)
     }
 end
 
+-- ============================================================================
+-- Quick ah search TODO
+-- ============================================================================
+function CollectorHelper:AuctionHouseHelper(item)
+    if AuctionHouseFrame and AuctionHouseFrame.CommoditiesBuyFrame and AuctionHouseFrame.CommoditiesBuyFrame.BackButton then
+        AuctionHouseFrame.CommoditiesBuyFrame.BackButton:Click()
+    end
+
+    local query = {
+        searchString = item.item.name,
+        sorts = {
+            { sortOrder = Enum.AuctionHouseSortOrder.Price, reverseSort = false },
+            { sortOrder = Enum.AuctionHouseSortOrder.Name,  reverseSort = false },
+        },
+        filters = {
+            Enum.AuctionHouseFilter.PoorQuality,
+            Enum.AuctionHouseFilter.CommonQuality,
+            Enum.AuctionHouseFilter.UncommonQuality,
+            Enum.AuctionHouseFilter.RareQuality,
+            Enum.AuctionHouseFilter.EpicQuality,
+        },
+    }
+    C_AuctionHouse.SendBrowseQuery(query)
+end

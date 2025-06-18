@@ -131,10 +131,10 @@ function CollectorHelper:merchantItemHideHandler()
                         CollectorHelper:merchantEquipHandler(i, isRecipeOrCosmetic)
                     else
                         eqBtn:Show()
-                        if isRecipeOrCosmetic then
-                            local sourceId = CollectorHelper.db.merchantBoeIndex[i]
-                            eqBtn:SetAttribute("item", "item:" .. sourceId);
-                        end
+                        --if isRecipeOrCosmetic then
+                        --    local sourceId = CollectorHelper.db.merchantBoeIndex[i]
+                        --    eqBtn:SetAttribute("item", "item:" .. sourceId);
+                        --end
                     end
                 else
                     for jk = 1, 10 do
@@ -181,7 +181,7 @@ function CollectorHelper:updateShop()
                 local itemsSources = 1
                 if currencyIndex == 0 then
                     -- is gold
-                    local _, _, price, _, _, _, _, _ = GetMerchantItemInfo(itemIndex)
+                    local _, _, price, _, _, _, _, _ = C_MerchantFrame.GetItemInfo(itemIndex)
                     for _ = 1, itemsSources do
                         local itemTexture = "MoneyCurrency"
                         if itemTexture then
@@ -281,15 +281,17 @@ function CollectorHelper:updateShop()
             if haveCurencyVal then
                 cost = cost - haveCurencyVal
             end
-            display = " |T" .. itemTexture .. ":16|t " .. " " .. ahTrack
-            --for i = 1, 10, 1 do
-            table.insert(self.db.ahItems, {
-                display = display,
-                linkItem = currencyLink[itemTexture],
-                quantity = CollectorHelper:textCFormat(COLORS.white, cost),
-                clear = true
-            })
-            --end
+            if cost > 0 then
+                display = " |T" .. itemTexture .. ":16|t " .. " " .. ahTrack
+                --for i = 1, 10, 1 do
+                table.insert(self.db.ahItems, {
+                    display = display,
+                    linkItem = currencyLink[itemTexture],
+                    quantity = CollectorHelper:textCFormat(COLORS.white, cost),
+                    clear = true
+                })
+                --end
+            end
         end
         missingItem = true
     end
@@ -325,6 +327,9 @@ end
 -- Equip item from merchant frame
 -- ============================================================================
 function CollectorHelper:merchantEquipHandler(i, isRecipeOrCosmetic)
+    if isRecipeOrCosmetic then
+        return
+    end
     local itemFrame = _G["MerchantItem" .. i .. "ItemButton"]
     local mActionFrame = CollectorHelper:frameBuilder({
         frameName = "MerchantItem" .. i .. "ActionFrameBtn",
@@ -339,7 +344,7 @@ function CollectorHelper:merchantEquipHandler(i, isRecipeOrCosmetic)
     })
     mActionFrame:SetBackdropColor(0, 0, 0, 0)
     mActionFrame:SetBackdropBorderColor(0, 0, 0, 0)
-    if isRecipeOrCosmetic then
+    if isRecipeOrCosmetic then -- disable this for now
         local aBtn = CollectorHelper:buttonBuilderInsecure({
             buttonName = "MerchantItem" .. i .. "CHASBtn",
             parent = mActionFrame,

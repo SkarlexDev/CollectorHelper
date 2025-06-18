@@ -3,6 +3,11 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
+            "## 2.1.1",
+            "- Patch versioning",
+            "- Minor framework update bug fix",
+        },
+        {
             "## 2.1.0",
             "- Added support interface for 11.1.5"
         },

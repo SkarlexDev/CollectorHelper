@@ -1,8 +1,9 @@
-## Interface: 110105
+## Interface: 110107, 110105
+## X-Interface: 110107, 110105
 
 ## Title: CollectorHelper
 ## Author: Skarlex
-## Version: 2.1.0
+## Version: 2.1.1
 ## Notes: Hide vendor collected items/ Buy page / Merchant price calculator / Ah track list / LFR Helper
 ## IconTexture: Interface\AddOns\CollectorHelper\Core\Media\Textures\Logo
 ## SavedVariables: settings, lfrCollected, recipeCollected
