@@ -1,7 +1,22 @@
 local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 
+-- ============================================================================
+-- Initialize News/Changelog Data
+-- ============================================================================
+
+--- Represents a changelog entry with version and changes.
+---@class ChangelogEntry
+---@field [1] string Version (e.g., "## 2.1.1")
+---@field [2] string|string[] Change description(s)
+
+--- Populates the addon changelog (used for News frame).
 function CollectorHelper:InitNewsData()
     self.db.news = {
+        {
+            "## 2.2.0",
+            "Deprecated functions changed",
+            "Code optimizations & more",
+        },
         {
             "## 2.1.1",
             "- Patch versioning",

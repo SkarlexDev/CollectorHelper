@@ -1,72 +1,63 @@
 local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 
+-- ============================================================================
+-- Entry point: Initializes all CollectorHelper modules
+-- ============================================================================
 function CollectorHelper:Init()
-    self:InitMerchant()
-    self:InitAHUI()
-    self:InitLfrGossip()
-    self:InitRecipeUI()
-    self:InitNews()
+    self:InitMerchant()         -- Merchant frame and logic
+    self:InitAHUI()             -- Auction House tracker
+    self:InitLfrGossip()        -- LFR gossip hooks
+    self:InitRecipeUI()         -- Recipe sync frame
+    self:InitNews()             -- News/changelog frame
 
-    self:InitOptionsPanel()
-    self:InitAutoSync()
+    self:InitOptionsPanel()     -- Config panel
+    self:InitAutoSync()         -- Automatic recipe learning handler
 end
 
-
 -- ============================================================================
--- Auto sync new recipe data on learn
+-- Automatically sync new recipe data when a new recipe is learned
 -- ============================================================================
 function CollectorHelper:InitAutoSync()
-    local recipeFrame = CreateFrame("Frame")
-    recipeFrame:RegisterEvent("NEW_RECIPE_LEARNED")
+    local frame = CreateFrame("Frame")
+    frame:RegisterEvent("NEW_RECIPE_LEARNED")
 
-    recipeFrame:SetScript("OnEvent", function(_, event, recipeID)
-        if event == "NEW_RECIPE_LEARNED" then
-            local info = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
-            if info ~= nil and info.parentProfessionName ~= nil then
-                local player = CollectorHelper.player
-                if player and recipeCollected[player] ~= nil then
-                    local professionData = recipeCollected[player][info.parentProfessionName]
-                    if professionData then
-                        professionData["recipes"][recipeID] = true;
+    frame:SetScript("OnEvent", function(_, _, recipeID)
+        local info = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
+        if not (info and info.parentProfessionName) then return end
 
-                        local currentTime = date("%Y-%m-%d %H:%M:%S")
-                        professionData["lastSync"] = currentTime
-                        local collectedRecipes = professionData["collected"]
-                        collectedRecipes = collectedRecipes + 1
-                        professionData["collected"] = collectedRecipes
-                        CollectorHelper:ShowRecipeUI(false)
-                    end
-                end
-            end
-        end
+        local player = self.player
+        local professionData = recipeCollected[player] and recipeCollected[player][info.parentProfessionName]
+        if not professionData then return end
+
+        professionData.recipes[recipeID] = true
+        professionData.collected = (professionData.collected or 0) + 1
+        professionData.lastSync = date("%Y-%m-%d %H:%M:%S")
+
+        self:ShowRecipeUI(false)
     end)
 end
 
 -- ============================================================================
--- Merchant init
+-- Setup merchant frame + recipe auto-show on merchant open
 -- ============================================================================
 function CollectorHelper:InitMerchant()
     self:InitMerchantUI()
 
-    hooksecurefunc("MerchantFrame_Update", function() self:updateShop() end)
-    MerchantNextPageButton:HookScript("OnClick", function() self:updateShop() end)
-    MerchantPrevPageButton:HookScript("OnClick", function() self:updateShop() end)
+    hooksecurefunc("MerchantFrame_Update", function() self:UpdateShop() end)
+    MerchantNextPageButton:HookScript("OnClick", function() self:UpdateShop() end)
+    MerchantPrevPageButton:HookScript("OnClick", function() self:UpdateShop() end)
 
     MerchantFrame:HookScript("OnShow", function()
-        C_Timer.After(0.25, function()
-            self:ShowRecipeUI(false)
-        end)
+        C_Timer.After(0.25, function() self:ShowRecipeUI(false) end)
     end)
 end
 
 -- ============================================================================
--- Lfr npc gossipUpdate
+-- Hook into LFR-related gossip NPCs for automatic logic
 -- ============================================================================
 function CollectorHelper:InitLfrGossip()
     GossipFrame:HookScript("OnShow", function()
-        C_Timer.After(0.25, function()
-            self:GossipLfr()
-        end)
+        C_Timer.After(0.25, function() self:GossipLfr() end)
     end)
 
     GossipFrame:HookScript("OnHide", function()

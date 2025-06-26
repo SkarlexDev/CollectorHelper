@@ -1,224 +1,135 @@
 local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 local COLORS = CollectorHelper.COLORS or {}
 
--- =========================================================================
--- Main frame
--- =========================================================================
+-- ============================================================================
+-- Initializes the Recipe Sync UI and profession buttons
+-- ============================================================================
 function CollectorHelper:InitRecipeUI()
-    self.recipeFrame = self:frameBuilder({
+    -- Main frame
+    self.recipeFrame = self:FrameBuilder({
         frameName = "CollectorHelper_Recipes",
         parent = UIParent,
         width = 300,
         height = 400,
-        point = {
-            pos = "CENTER",
-            x = 0,
-            y = 0,
-        },
+        point = { pos = "CENTER", x = 0, y = 0 },
         titleBuilder = {
-            text = self:textCFormat(COLORS.yellow, "CollectorHelper Recipe sync"),
-            point = {
-                pos = "TOP",
-                x = 0,
-                y = -8,
-            }
+            text = self:TextCFormat(COLORS.yellow, "CollectorHelper Recipe sync"),
+            point = { pos = "TOP", x = 0, y = -8 },
         }
     })
 
-    -- Make the frame draggable
     self.recipeFrame:SetMovable(true)
     self.recipeFrame:EnableMouse(true)
     self.recipeFrame:RegisterForDrag("LeftButton")
     self.recipeFrame:SetScript("OnDragStart", self.recipeFrame.StartMoving)
     self.recipeFrame:SetScript("OnDragStop", self.recipeFrame.StopMovingOrSizing)
 
-    -- Add a close button
-    self:buttonBuilder({
+    self:ButtonBuilder({
         buttonName = "Collector_RecipeCloseButton",
         parent = self.recipeFrame,
         text = "Close",
         width = 100,
         height = 22,
-        point = {
-            pos = "BOTTOM",
-            x = 0,
-            y = 8,
-        },
+        point = { pos = "BOTTOM", x = 0, y = 8 },
         onClickScript = function(_, button)
             if button == "LeftButton" then
-                CollectorHelper.recipeFrame:Hide()
+                self.recipeFrame:Hide()
             end
         end
     })
 
-    -- Function to generate profession buttons
-    local function generateProfButton(yOffset, xOffset, iconSize, frame, showSync)
-        local button = self:buttonBuilder({
-            buttonName = "Collector_ProfButton_" .. yOffset,
-            parent = frame,
+    -- ============================================================================
+    -- Internal: Sync profession data after opening trade skill UI
+    -- ============================================================================
+    function self:SyncProfessionData(button, professionName)
+        local player = self.player
+        if not (player and recipeCollected[player] and professionName) then return end
+
+        local professionData = recipeCollected[player][professionName]
+        if not professionData then return end
+
+        local collected, total = 0, 0
+        local now = date("%Y-%m-%d %H:%M:%S")
+        professionData.recipes = {}
+
+        for _, id in pairs(C_TradeSkillUI.GetAllRecipeIDs()) do
+            local info = C_TradeSkillUI.GetRecipeInfo(id)
+            if info then
+                professionData.recipes[info.recipeID] = info.learned or false
+                if info.learned then collected = collected + 1 end
+                total = total + 1
+            end
+        end
+
+        professionData.collected = collected
+        professionData.total = total
+        professionData.lastSync = now
+
+        if button.lastSyncText then
+            button.collectedText:SetText("Collected: " .. collected .. " / " .. total)
+            button.lastSyncText:SetText("Last Sync: " .. now)
+        else
+            button.collectedText:SetText(collected .. " / " .. total)
+        end
+    end
+
+    -- ============================================================================
+    -- Internal: Button factory
+    -- ============================================================================
+    local function generateProfButton(yOffset, xOffset, size, parent, showSync)
+        local button = self:ButtonBuilder({
+            buttonName = "Collector_ProfButton_" .. yOffset .. "_" .. xOffset,
+            parent = parent,
             text = "",
-            width = iconSize,
-            height = iconSize,
-            point = {
-                pos = "Center",
-                x = xOffset,
-                y = yOffset,
-            },
-            onClickScript = function(self, button)
-                if button == "LeftButton" then
-                    if self.tradeSkillID then
-                        --print("Opening TradeSkill ID:", self.tradeSkillID)
-                        C_TradeSkillUI.OpenTradeSkill(self.tradeSkillID)
-                    else
-                        --print("No TradeSkillID set for this button.")
-                    end
-
+            width = size,
+            height = size,
+            point = { pos = "CENTER", x = xOffset, y = yOffset },
+            onClickScript = function(btn, click)
+                if click == "LeftButton" and btn.tradeSkillID then
+                    C_TradeSkillUI.OpenTradeSkill(btn.tradeSkillID)
                     C_Timer.After(0.25, function()
-                        -- Now, populate the recipes for this profession
-                        local player = CollectorHelper.player
-                        local professionName = self.name -- Get the profession name (e.g., Jewelcrafting)
-                        if player and recipeCollected[player] ~= nil and professionName then
-                            local professionData = recipeCollected[player][professionName]
-                            if professionData then
-                                -- Loop through all recipe IDs and update the profession data
-                                local collectedRecipes = 0
-                                local totalRecipes = 0
-                                local currentTime = date("%Y-%m-%d %H:%M:%S") -- Get current time for lastSync
-
-                                -- Reset the recipes table and count valid ones
-                                professionData["recipes"] = {} -- Reset the recipes data
-
-                                for _, id in pairs(C_TradeSkillUI.GetAllRecipeIDs()) do
-                                    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(id)
-                                    if recipeInfo then
-                                        -- Store the recipe ID and its learned status (true/false)
-                                        if recipeInfo.learned then
-                                            professionData["recipes"][recipeInfo.recipeID] = true
-                                            collectedRecipes = collectedRecipes + 1
-                                        else
-                                            professionData["recipes"][recipeInfo.recipeID] = false
-                                        end
-                                        totalRecipes = totalRecipes + 1
-                                    end
-                                end
-
-                                -- Update the profession's collected count and lastSync timestamp
-                                professionData["collected"] = collectedRecipes
-                                professionData["total"] = totalRecipes
-                                professionData["lastSync"] = currentTime
-
-                                -- Update the button text dynamically
-
-                                if showSync then
-                                    self.collectedText:SetText("Collected: " .. collectedRecipes .. " / " .. totalRecipes)
-                                    self.lastSyncText:SetText("Last Sync: " .. currentTime)
-                                else
-                                    self.collectedText:SetText(collectedRecipes .. " / " .. totalRecipes)
-                                end
-                            end
-                        end
+                        self:SyncProfessionData(btn, btn.name)
                     end)
                 end
             end
         })
 
-        local texture = button:CreateTexture(nil, "ARTWORK")
-        texture:SetAllPoints(button)
-        texture:SetTexture(132764)
-        button.icon = texture -- Store the texture as a property of the button
+        -- Icon
+        local icon = button:CreateTexture(nil, "ARTWORK")
+        icon:SetAllPoints(button)
+        icon:SetTexture(132764)
+        button.icon = icon
 
-        -- Create the text for "Collected" and "Last Sync"
-        local collectedText = button:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        collectedText:SetPoint("TOP", button, "BOTTOM", 0, -2)
-        collectedText:SetText("No profession")
-        button.collectedText = collectedText
+        -- Collected text
+        local text = button:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        text:SetPoint("TOP", button, "BOTTOM", 0, -2)
+        text:SetText("No profession")
+        button.collectedText = text
 
+        -- Sync timestamp text
         if showSync then
-            local lastSyncText = button:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-            lastSyncText:SetPoint("TOP", collectedText, "BOTTOM", 0, -2)
-            button.lastSyncText = lastSyncText
+            local syncText = button:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            syncText:SetPoint("TOP", text, "BOTTOM", 0, -2)
+            button.lastSyncText = syncText
         end
 
         return button
     end
 
-    -- Create and store buttons
+    -- ============================================================================
+    -- Build and store buttons
+    -- ============================================================================
     self.profButtons = {
-        -- separated frame
+        -- Main frame buttons
         generateProfButton(125, 0, 64, self.recipeFrame, true),
         generateProfButton(25, 0, 64, self.recipeFrame, true),
         generateProfButton(-75, 0, 64, self.recipeFrame, true),
 
-        -- merchant extension frame
+        -- Merchant extension frame buttons
         generateProfButton(2, -110, 60, self.innerRecipeFrame, false),
         generateProfButton(2, 0, 60, self.innerRecipeFrame, false),
         generateProfButton(2, 100, 60, self.innerRecipeFrame, false),
     }
+
     self.recipeFrame:Hide()
-end
-
--- =========================================================================
--- Recipe frame show
--- =========================================================================
-function CollectorHelper:ShowRecipeUI(doShowFrame)
-    -- Nested function to update all profession buttons dynamically
-    local function updateButtons(buttons)
-        -- Retrieve current professions
-        local prof1index, prof2index, _, _, cooking = GetProfessions()
-
-        -- A table of profession indexes and corresponding buttons
-        local professionData = {
-            { prof1index, buttons[1] },
-            { prof2index, buttons[2] },
-            { cooking,    buttons[3] },
-            { prof1index, buttons[4] },
-            { prof2index, buttons[5] },
-            { cooking,    buttons[6] },
-        }
-
-        -- Loop over each profession and update the corresponding button
-        for _, data in ipairs(professionData) do
-            local profIndex, button = unpack(data)
-            if profIndex then
-                local name, iconTexture, _, _, _, _, tradeSkillID = GetProfessionInfo(profIndex)
-
-                -- Update the icon texture and tradeSkillID
-                if iconTexture then
-                    button.icon:SetTexture(iconTexture) -- Set the profession icon
-                    button.tradeSkillID = tradeSkillID  -- Dynamically set tradeSkillID
-                    button.name = name                  -- Store the profession name in the button
-                else
-                    button.icon:SetTexture(132764)
-                    button.tradeSkillID = nil -- Clear tradeSkillID
-                end
-
-                -- Fetch the collected and lastSync data for the profession from recipeCollected[self.player]
-                local player = self.player
-                if player and recipeCollected[player] ~= nil then
-                    local professionData = recipeCollected[player][name] -- Use the profession name here
-                    if professionData then
-                        local collected = professionData["collected"] or 0
-                        local lastSync = professionData["lastSync"] or "Not available"
-                        local totalRecipes = professionData["total"] or 0
-                        -- Update the text under the button
-
-                        if button.lastSyncText ~= nil then
-                            button.collectedText:SetText("Collected: " .. collected .. " / " .. totalRecipes)
-                            button.lastSyncText:SetText("Last Sync: " .. lastSync)
-                        else
-                            button.collectedText:SetText(collected .. " / " .. totalRecipes)
-                        end
-                    end
-                end
-            end
-        end
-    end
-
-    if doShowFrame then
-        self.recipeFrame:Show()
-    end
-    -- Update the buttons to reflect current profession data
-    if self.profButtons then
-        updateButtons(self.profButtons)
-    end
 end

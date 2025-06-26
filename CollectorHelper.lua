@@ -1,21 +1,23 @@
 -- ============================================================================
--- CollectorHelper --
+-- CollectorHelper Main Addon Initialization
 -- ============================================================================
 
 local CollectorHelper = LibStub("AceAddon-3.0"):NewAddon("CollectorHelper", "AceConsole-3.0", "AceEvent-3.0")
 
 -- ============================================================================
--- Command help table for the slash command "/ch"
+-- Slash Command Help Table (/ch)
 -- ============================================================================
 local commands = {
-    { cmd = "help",     desc = "- Displays this help or command list." },
-    { cmd = "options",  desc = "- Opens config panel." },
-    { cmd = "ah",       desc = "- Shows auction house shop list" },
-    { cmd = "recipe",   desc = "- Shows recipe frame for sync" },
-    { cmd = "news",     desc = "- Shows news/changelog frame" },
+    { cmd = "help",    desc = "- Displays this help or command list." },
+    { cmd = "options", desc = "- Opens config panel." },
+    { cmd = "ah",      desc = "- Shows auction house shop list." },
+    { cmd = "recipe",  desc = "- Shows recipe frame for sync." },
+    { cmd = "news",    desc = "- Shows news/changelog frame." },
 }
 
-
+-- ============================================================================
+-- Addon Lifecycle: OnInitialize
+-- ============================================================================
 function CollectorHelper:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("CollectorHelperDB", defaults, true)
     self:RegisterChatCommand("ch", "HandleChatCommand")
@@ -27,21 +29,29 @@ function CollectorHelper:OnInitialize()
     self:InitSettings()
 end
 
+-- ============================================================================
+-- Addon Lifecycle: OnEnable
+-- ============================================================================
 function CollectorHelper:OnEnable()
-    --self:Print("OnInitialize fired. Welcome! Version: " .. self.db.version)
+    -- self:Print("OnEnable fired. Welcome! Version: " .. self.db.version)
     self:Init()
 end
 
+-- ============================================================================
+-- Addon Lifecycle: OnDisable
+-- ============================================================================
 function CollectorHelper:OnDisable()
-    --self:Print("Addon Disabled!")
+    -- self:Print("Addon Disabled!")
 end
 
 -- ============================================================================
--- Command Handle
+-- Slash Command Dispatcher
 -- ============================================================================
+--- Handles "/ch" commands.
+-- @param input string Command input
 function CollectorHelper:HandleChatCommand(input)
-    local command, _ = strsplit(" ", input, 2)
-    command = command and command:lower() or ""
+    local command = strlower(strtrim(strsplit(" ", input or "", 2)))
+
     if command == "" or command == "help" then
         self:ShowHelpCmd()
     elseif command == "ah" then
@@ -59,20 +69,16 @@ function CollectorHelper:HandleChatCommand(input)
 end
 
 -- ============================================================================
--- Commands
+-- Display Help for Slash Commands
 -- ============================================================================
 function CollectorHelper:ShowHelpCmd()
-    self:Print("Displaying command list:")
+    self:Print("Available /ch commands:")
     for _, entry in ipairs(commands) do
         self:Print(string.format("/ch %s %s", entry.cmd, entry.desc))
     end
 end
--- ============================================================================
--- Elvui check
--- ============================================================================
 
-function CollectorHelper:IsElvUI()
-    --return (C_AddOns.IsAddOnLoaded("ElvUI") or false)
-end
-
+-- ============================================================================
+-- Global Access
+-- ============================================================================
 _G.CollectorHelper = CollectorHelper

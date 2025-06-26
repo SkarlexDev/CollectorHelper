@@ -70,7 +70,7 @@ function CollectorHelper:UpdateLfrGossip(lfrNpc)
                             local killedState = lockDownInstance and lockDownInstance[bossInfo.index]
                             if killedState then
                                 killed = killed + 1
-                                table.insert(bossTooltipLines, self:textCFormat(COLORS.red, bossInfo.bossName))
+                                table.insert(bossTooltipLines, self:TextCFormat(COLORS.red, bossInfo.bossName))
                             else
                                 table.insert(bossTooltipLines, bossInfo.bossName)
                             end
@@ -86,23 +86,23 @@ function CollectorHelper:UpdateLfrGossip(lfrNpc)
                         end
 
                         if killed > 0 and totalBosses > killed and stateCol == false then
-                            displayText = self:textCFormat(COLORS.yellow, displayText)
+                            displayText = self:TextCFormat(COLORS.yellow, displayText)
                         end
 
                         if child.Icon and totalBosses == killed then
                             child.Icon:SetTexture(130751)
                             if stateCol == false then
-                                displayText = self:textCFormat(COLORS.green, displayText)
+                                displayText = self:TextCFormat(COLORS.green, displayText)
                             end
                         end
                         if stateCol == true then
-                            displayText = self:textCFormat(COLORS.red, displayText)
+                            displayText = self:TextCFormat(COLORS.red, displayText)
                         end
                         child:SetText(displayText)
                         child:SetHeight(16)
 
                         if child.CH == nil then
-                            local mActionFrame = self:frameBuilder({
+                            local mActionFrame = self:FrameBuilder({
                                 frameName = nil,
                                 parent = child,
                                 width = 50,
@@ -115,7 +115,7 @@ function CollectorHelper:UpdateLfrGossip(lfrNpc)
                             })
                             mActionFrame:SetBackdropColor(0, 0, 0, 0)
                             mActionFrame:SetBackdropBorderColor(0, 0, 0, 0)
-                            local aBtn = self:buttonBuilder({
+                            local aBtn = self:ButtonBuilder({
                                 buttonName = nil,
                                 parent = mActionFrame,
                                 text = "TC/UW",
@@ -136,7 +136,7 @@ function CollectorHelper:UpdateLfrGossip(lfrNpc)
                                         "This allows you to mark a raid wing as completed or unmark it, providing better visual tracking of your collection",
                                         nil, nil, nil, true)
                                     GameTooltip:AddLine(
-                                        self:textCFormat(COLORS.red, "Red") ..
+                                        self:TextCFormat(COLORS.red, "Red") ..
                                         " option text color will mark the completed state", nil, nil, nil, true)
                                     GameTooltip:Show()
                                 end

@@ -1,27 +1,34 @@
 local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 
+-- ============================================================================
+-- Initialize Database Fields
+-- ============================================================================
+--- Initializes internal database tables and runtime flags.
 function CollectorHelper:InitDB()
-    self.db.lfrData = {}
-    self.db.gossipData = {}
-    self.db.recipes = {}
-    self.db.news = {}
+    -- Persistent saved data tables
+    self.db.lfrData           = {}
+    self.db.gossipData        = {}
+    self.db.recipes           = {}
+    self.db.news              = {}
+    self.db.lockDownData      = {}
+    self.db.itemIndexMap      = {}
+    self.db.ahItems           = {}
+    self.db.merchantBoeIndex  = {}
 
+    -- Runtime flags / session state
+    self.gossipUpdate      = false
+    self.forceShowMerchant = false
+    self.doAhTrack         = false
+    self.isElvuiSLE        = false
+    self.pNameToCheck      = ""
+
+    -- Initialize sub-systems
     self:InitLFRData()
     self:InitLFRGossipData()
     self:InitRecipeData()
     self:InitNewsData()
-
-    self.gossipUpdate = false
-    self.forceShowMerchant = false
-    self.doAhTrack = false
-    self.isElvuiSLE = false
-    self.pNameToCheck = ""
-
-    self.db.lockDownData = {}
-    self.db.itemIndexMap = {}
-    self.db.ahItems = {}
-    self.db.merchantBoeIndex = {}
 end
+
 
 -- ============================================================================
 -- Initialize LFR Data
