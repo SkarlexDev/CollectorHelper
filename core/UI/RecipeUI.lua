@@ -43,10 +43,16 @@ function CollectorHelper:InitRecipeUI()
     -- ============================================================================
     function self:SyncProfessionData(button, professionName)
         local player = self.player
-        if not (player and recipeCollected[player] and professionName) then return end
+        if not (player and recipeCollected[player] and professionName) then 
+            self:initializeRecipesCollected()
+            return 
+        end
 
         local professionData = recipeCollected[player][professionName]
-        if not professionData then return end
+        if not professionData then 
+            self:initializeRecipesCollected()
+            return 
+        end
 
         local collected, total = 0, 0
         local now = date("%Y-%m-%d %H:%M:%S")
