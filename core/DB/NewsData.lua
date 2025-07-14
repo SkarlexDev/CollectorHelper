@@ -13,7 +13,7 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
-            "##2.2.1",
+            "##2.5.1",
             "-Hotfixed recipe sync profession on first time learn"
         },
         {
