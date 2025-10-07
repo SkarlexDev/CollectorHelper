@@ -1,9 +1,21 @@
-## Interface: 110107, 110105
-## X-Interface: 110107, 110105
+## Category-enUS: Collections
+## Category-deDE: Kriegsmeutesammlungen
+## Category-esES: Colecciones de banda guerrera
+## Category-esMX: Colecciones de tropa
+## Category-frFR: Collections du bataillon
+## Category-itIT: Collezioni della Brigata
+## Category-koKR: 전투부대 수집품
+## Category-ptBR: Coleções do Bando de Guerra
+## Category-ruRU: Коллекции отряда
+## Category-zhCN: 战团藏品
+## Category-zhTW: 戰隊收藏
+
+## Interface: 110200, 110205
+## X-Interface: 110200, 110205
 
 ## Title: CollectorHelper
 ## Author: Skarlex
-## Version: 2.5.1
+## Version: 2.5.2
 ## Notes: Hide vendor collected items/ Buy page / Merchant price calculator / Ah track list / LFR Helper
 ## IconTexture: Interface\AddOns\CollectorHelper\Core\Media\Textures\Logo
 ## SavedVariables: settings, lfrCollected, recipeCollected
