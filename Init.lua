@@ -82,7 +82,7 @@ function CollectorHelper:initializeRecipesCollected()
 
         local player = self:GetCurrentPlayerID()
         self.player = player
-        local isFirstTime recipeCollected[player] == nil
+        local isFirstTime = recipeCollected[player] == nil
         recipeCollected[player] = recipeCollected[player] or {}
 
         for _, profName in ipairs(profNames) do

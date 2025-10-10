@@ -13,6 +13,10 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
+            "##2.5.4",
+            "-Lua hotfix"
+        }
+        {
             "##2.5.3",
             "-Recipe popup Fix"
         },
