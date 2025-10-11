@@ -15,7 +15,7 @@ function CollectorHelper:InitNewsData()
         {
             "##2.5.4",
             "-Lua hotfix"
-        }
+        },
         {
             "##2.5.3",
             "-Recipe popup Fix"
