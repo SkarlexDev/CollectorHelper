@@ -65,6 +65,54 @@ function CollectorHelper:InitMerchantUI()
         bgColorR = 0, bgColorG = 0, bgColorB = 0, bgAlpha = 0.251,
     })
 
+    self.housingButton = self:ButtonBuilder({
+        buttonName = "CollectorHelper_HousingExpand",
+        parent = self.innerRecipeFrame,
+        text = "<->",
+        width = 20,
+        height = buttonHeight,
+        point = { pos = "right", x = 20, y = 0 },
+        onClickScript = function()
+            local isVisible = self.housingFrame:IsShown()
+            self.housingFrame:SetShown(not isVisible)
+            settings.showHousingFrame = not isVisible
+        end,
+    })
+
+    self.housingFrame = self:FrameBuilder({
+        frameName = "CollectorHelper_HousingFrame",
+        parent = self.merchantFrameCost,
+        width = width,
+        height = 102,
+        point = { pos = "TOP", x = width, y = -307 },
+        bgColorR = 0, bgColorG = 0, bgColorB = 0, bgAlpha = 1,
+    })
+
+    self:FontBuilder({
+        parent = self.housingFrame,
+        text = self:TextCFormat(COLORS.yellow, "Extend to buy housing duplicates"),
+        point = { pos = "TOP", x = 0, y = -10 },
+    })
+
+    self.housingSlider = self:SliderBuilder({
+        sliderName = "CollectorHelper_HousingSlider",
+        parent = self.housingFrame,
+        width = 150,
+        height = 20,
+        point = { pos = "CENTER", x = 0, y = -10 },
+
+        min = 1,
+        max = 50,
+        step = 1,
+        value = settings.housingDuplicateCount or 1,
+        label = "Count",
+        valueDisplay = true,
+        onValueChanged = function(_, v)
+            settings.housingDuplicateCount = v   
+            CollectorHelper:UpdateShop()  -- Trigger shop data refresh  
+        end,
+    })
+
     local buttonFrame = self:FrameBuilder({
         frameName = "CollectorHelper_MerchantInnerBtn0",
         parent = self.merchantFrameCost,
@@ -125,6 +173,10 @@ function CollectorHelper:InitMerchantUI()
     -- Toggle Visibility of Cost Frame (State: saved in settings)
     if settings.showCostFrame == false then
         self.merchantFrameCost:Hide()
+    end
+
+    if settings.showHousingFrame == false then
+        self.housingFrame:Hide()
     end
 
     -- Toggle Buttons on Merchant Tab

@@ -2,10 +2,11 @@
 
 Dev data for new recipes
 
--- As of 25/12/2024
+-- As of 25/12/2024 - >= 10.0.0 DF 11.2.5
 -- https://www.wowhead.com/items/finder
--- https://www.wowhead.com/items/recipes/jewelcrafting/live-only:on?filter=161:92;1:1;0:0
+-- https://www.wowhead.com/items/recipes/alchemy?filter=161:92:82;1:1:2;0:0:100000
 -- filter live-only:on?filter=161:92;1:1;0:0
+-- ?filter=161:92:82;1:1:2;0:0:100000
 -- wowhead fetcher
 
 */

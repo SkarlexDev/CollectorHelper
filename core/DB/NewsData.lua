@@ -13,6 +13,10 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
+            "##2.6.0",
+            "-Added housing support & duplicate buy for housing items",
+        },
+        {
             "##2.5.5",
             "-ACE3 Updates"
         },

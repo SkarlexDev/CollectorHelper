@@ -115,6 +115,66 @@ function CollectorHelper:ButtonBuilder(params)
     return b
 end
 
+
+-- ============================================================================
+-- UI: Slider Builder
+-- ============================================================================
+--- Creates a slider with numeric range, label and change callback.
+-- @param params table: {
+--      parent, sliderName?,
+--      min?, max?, step?, value?,
+--      width?, height?, point?,
+--      label?, onValueChanged?
+-- }
+-- @return Slider
+function CollectorHelper:SliderBuilder(params)
+    local slider = CreateFrame(
+        "Slider",
+        params.sliderName,
+        params.parent,
+        "OptionsSliderTemplate"
+    )
+
+    self:ConfigureFrame(slider, params)
+
+    local min = params.min or 1
+    local max = params.max or 20
+    local step = params.step or 1
+    local value = params.value or min
+
+    slider:SetMinMaxValues(min, max)
+    slider:SetValueStep(step)
+    slider:SetObeyStepOnDrag(true)
+    slider:SetValue(value)
+
+    _G[slider:GetName() .. "Low"]:SetText(tostring(min))
+    _G[slider:GetName() .. "High"]:SetText(tostring(max))
+    _G[slider:GetName() .. "Text"]:SetText(params.label or "")
+
+    local valueFS = nil
+    if params.valueDisplay then
+        valueFS = slider:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        valueFS:SetPoint("BOTTOM", slider, "BOTTOM", 0, -9)
+        valueFS:SetText(tostring(value))
+    end
+
+    slider:SetScript("OnValueChanged", function(self, v)
+        v = math.floor(v + 0.5)
+
+        if valueFS then
+            valueFS:SetText(tostring(v))
+        end
+
+        if params.onValueChanged then
+            params.onValueChanged(self, v)
+        end
+    end)
+
+    return slider
+end
+
+
+
 -- ============================================================================
 -- Create a UI row frame for display in scrollable lists
 -- Handles backdrop, button, text, and optional item details like percentage, quantity, and clear button.

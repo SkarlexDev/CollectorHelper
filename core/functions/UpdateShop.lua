@@ -58,7 +58,21 @@ function CollectorHelper:UpdateShop()
                             if gold > 0 then
                                 money = money - (silver * 100) - copper
                             end
-                            itemData[itemTexture] = money
+
+                            local multiplier = 1
+                            if settings.housingDuplicateCount > 1 then
+                                local isHousing = source.itemType == "Housing"
+                                if isHousing then
+                                    local housingInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(source.itemId, true)
+                                    if housingInfo then
+                                        local difSetting = settings.housingDuplicateCount - housingInfo.numStored
+                                        if difSetting > 0 then
+                                                multiplier = difSetting                                   
+                                        end
+                                    end
+                                end
+                            end                            
+                            itemData[itemTexture] = money * multiplier
                         end
                     end
                 else

@@ -62,6 +62,15 @@ function CollectorHelper:CheckShopID(source)
         end
     end
 
+    -- Housing
+    local isHousing = source.itemType == "Housing"
+    if isHousing then
+        local housingInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(source.itemId, true)
+        if housingInfo then
+            return housingInfo.numStored > settings.housingDuplicateCount and 1 or 0
+        end
+    end
+
     -- Transmog set or heirloom
     local itemSetId = C_Item.GetItemLearnTransmogSet(source.itemId)
     local isItemHeirloom = C_Heirloom.IsItemHeirloom(source.itemId)
