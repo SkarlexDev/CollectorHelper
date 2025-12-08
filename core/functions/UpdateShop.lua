@@ -42,22 +42,6 @@ function CollectorHelper:UpdateShop()
                     for _ = 1, itemsSources do
                         local itemTexture = "MoneyCurrency" -- Special texture for gold
                         if itemTexture then
-                            currencyLink[itemTexture] = nil
-                            -- Accumulate total gold cost
-                            if currencyMap[itemTexture] then
-                                currencyMap[itemTexture] = currencyMap[itemTexture] + price
-                            else
-                                currencyMap[itemTexture] = price
-                            end
-
-                            -- Format player's current money amount (gold, silver, copper)
-                            local money = GetMoney()
-                            local gold = floor(money / 1e4)
-                            local silver = floor(money / 100 % 100)
-                            local copper = money % 100
-                            if gold > 0 then
-                                money = money - (silver * 100) - copper
-                            end
 
                             local multiplier = 1
                             if settings.housingDuplicateCount > 1 then
@@ -71,8 +55,25 @@ function CollectorHelper:UpdateShop()
                                         end
                                     end
                                 end
-                            end                            
-                            itemData[itemTexture] = money * multiplier
+                            end               
+
+                            currencyLink[itemTexture] = nil
+                            -- Accumulate total gold cost
+                            if currencyMap[itemTexture] then
+                                currencyMap[itemTexture] = currencyMap[itemTexture] + price * multiplier
+                            else
+                                currencyMap[itemTexture] = price * multiplier
+                            end
+
+                            -- Format player's current money amount (gold, silver, copper)
+                            local money = GetMoney()
+                            local gold = floor(money / 1e4)
+                            local silver = floor(money / 100 % 100)
+                            local copper = money % 100
+                            if gold > 0 then
+                                money = money - (silver * 100) - copper
+                            end                                         
+                            itemData[itemTexture] = money
                         end
                     end
                 else
