@@ -14,6 +14,9 @@ function CollectorHelper:UpdateShop()
     CollectorHelper:MerchantItemHideHandler()
 
     local function AddCurrency(texture, value, link, isAhItem)
+        if value == 0 then         
+            return
+        end
         if currencyMap[texture] then
             currencyMap[texture] = currencyMap[texture] + value
         else

@@ -13,6 +13,10 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
+            "##2.6.3",
+            "- Updated recipe db data",
+        },
+        {
             "##2.6.2",
             "- Multiple currency cost extend",
         },
