@@ -51,15 +51,18 @@ function CollectorHelper:UpdateShop()
                 local data = C_MerchantFrame.GetItemInfo(itemIndex)
                 local price = data and data.price
                 local multiplier = 1
-                if settings.housingDuplicateCount > 1 and source.itemType == "Housing" then
-                    local housingInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(source.itemId, true)
-                    if housingInfo then
-                        local difSetting = settings.housingDuplicateCount - housingInfo.numStored
-                        if difSetting > 0 then
-                            multiplier = difSetting
+                if settings and settings.housingDuplicateCount ~= nil then
+                    if settings.housingDuplicateCount > 1 and source.itemType == "Housing" then
+                        local housingInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(source.itemId, true)
+                        if housingInfo then
+                            local difSetting = settings.housingDuplicateCount - housingInfo.numStored
+                            if difSetting > 0 then
+                                multiplier = difSetting
+                            end
                         end
                     end
                 end
+                
                 if price then                    
                     AddCurrency("MoneyCurrency", price * multiplier, nil, false)
                 end
