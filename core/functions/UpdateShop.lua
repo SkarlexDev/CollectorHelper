@@ -52,7 +52,7 @@ function CollectorHelper:UpdateShop()
                 local price = data and data.price
                 local multiplier = 1
                 if settings and settings.housingDuplicateCount ~= nil then
-                    if settings.housingDuplicateCount > 1 and source.itemType == "Housing" then
+                    if settings.housingDuplicateCount > 1 and source~= nil and source.itemType == "Housing" then
                         local housingInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(source.itemId, true)
                         if housingInfo then
                             local difSetting = settings.housingDuplicateCount - housingInfo.numStored
