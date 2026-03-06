@@ -13,6 +13,11 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
+            "##2.7.0",
+            "- Game interface update",
+            "- Fix housing"
+        },
+        {
             "##2.6.5",
             "- Minor fix for merchant update"
         },

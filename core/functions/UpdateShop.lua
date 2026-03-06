@@ -55,7 +55,8 @@ function CollectorHelper:UpdateShop()
                     if settings.housingDuplicateCount > 1 and source~= nil and source.itemType == "Housing" then
                         local housingInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(source.itemId, true)
                         if housingInfo then
-                            local difSetting = settings.housingDuplicateCount - housingInfo.numStored
+                            local numOwned = housingInfo.quantity + housingInfo.numPlaced 
+                            local difSetting = settings.housingDuplicateCount - numOwned
                             if difSetting > 0 then
                                 multiplier = difSetting
                             end

@@ -10,12 +10,12 @@
 ## Category-zhCN: 战团藏品
 ## Category-zhTW: 戰隊收藏
 
-## Interface: 110207, 120000
-## X-Interface: 110207, 120000
+## Interface: 120000, 110200
+## X-Interface: 120000, 110200
 
 ## Title: CollectorHelper
 ## Author: Skarlex
-## Version: 2.6.5
+## Version: 2.7.0
 ## Notes: Hide vendor collected items/ Buy page / Merchant price calculator / Ah track list / LFR Helper
 ## IconTexture: Interface\AddOns\CollectorHelper\Core\Media\Textures\Logo
 ## SavedVariables: settings, lfrCollected, recipeCollected
