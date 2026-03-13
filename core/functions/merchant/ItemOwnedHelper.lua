@@ -68,7 +68,7 @@ function CollectorHelper:CheckShopID(source)
         local housingInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(source.itemId, true)
         if housingInfo then
             local numOwned = housingInfo.quantity + housingInfo.numPlaced 
-            return numOwned > settings.housingDuplicateCount and 1 or 0
+            return numOwned >= settings.housingDuplicateCount and 1 or 0
         end
     end
 

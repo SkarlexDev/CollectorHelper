@@ -57,7 +57,7 @@ function CollectorHelper:UpdateShop()
                         if housingInfo then
                             local numOwned = housingInfo.quantity + housingInfo.numPlaced 
                             local difSetting = settings.housingDuplicateCount - numOwned
-                            if difSetting > 0 then
+                            if difSetting >= 0 then
                                 multiplier = difSetting
                             end
                         end
