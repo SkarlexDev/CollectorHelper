@@ -42,23 +42,33 @@ function CollectorHelper:InitRecipeUI()
     -- Internal: Sync profession data after opening trade skill UI
     -- ============================================================================
     function self:SyncProfessionData(button, professionName)
+        if not self:IsTrackedRecipeProfession(professionName) then
+            return false
+        end
+
         local player = self.player
         if not (player and recipeCollected[player] and professionName) then 
             self:initializeRecipesCollected()
-            return 
+            return false
         end
 
         local professionData = recipeCollected[player][professionName]
         if not professionData then 
             self:initializeRecipesCollected()
-            return 
+            return false
+        end
+
+        local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
+        if type(recipeIDs) ~= "table" then
+            return false
         end
 
         local collected, total = 0, 0
         local now = date("%Y-%m-%d %H:%M:%S")
         professionData.recipes = {}
+        professionData.icon = button.iconTexture or (button.icon and button.icon:GetTexture())
 
-        for _, id in pairs(C_TradeSkillUI.GetAllRecipeIDs()) do
+        for _, id in pairs(recipeIDs) do
             local info = C_TradeSkillUI.GetRecipeInfo(id)
             if info then
                 professionData.recipes[info.recipeID] = info.learned or false
@@ -71,12 +81,15 @@ function CollectorHelper:InitRecipeUI()
         professionData.total = total
         professionData.lastSync = now
 
-        if button.lastSyncText then
-            button.collectedText:SetText("Collected: " .. collected .. " / " .. total)
-            button.lastSyncText:SetText("Last Sync: " .. now)
-        else
-            button.collectedText:SetText(collected .. " / " .. total)
+        if button.collectedText then
+            if button.lastSyncText then
+                button.collectedText:SetText("Collected: " .. collected .. " / " .. total)
+                button.lastSyncText:SetText("Last Sync: " .. now)
+            else
+                button.collectedText:SetText(collected .. " / " .. total)
+            end
         end
+        return true
     end
 
     -- ============================================================================

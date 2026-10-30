@@ -17,7 +17,8 @@
 	<Script file="core/Features/Merchant/ShopCalculator.lua"/>
 
 	<Script file="core/Features/Recipes/Helpers.lua"/>
-	<Script file="core/Features/News/Window.lua"/>
+	<Script file="core/Features/Recipes/Dashboard.lua"/>
+	<Script file="core/Features/News/Dashboard.lua"/>
 
 	<Script file="core/Bootstrap/SavedVariables.lua"/>
 
@@ -25,10 +26,7 @@
 	<Script file="core/Features/AuctionHouse/UI.lua"/>
 	<Script file="core/Features/LFR/Gossip.lua"/>
 	<Script file="core/Features/Recipes/UI.lua"/>
-	<Script file="core/Features/News/Init.lua"/>
-
-	<Script file="core/Features/Options/Init.lua"/>
-	<Script file="core/Features/Options/Panels/MainPanel.lua"/>
-	<Script file="core/Features/Options/Panels/Recipes.lua"/>
+	<Script file="core/Features/Dashboard/Window.lua"/>
+	<Script file="core/Features/Dashboard/Minimap.lua"/>
 	<Script file="core/Bootstrap.lua"/>
 </Ui>

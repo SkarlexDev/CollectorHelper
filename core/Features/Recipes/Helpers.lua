@@ -1,5 +1,13 @@
 local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 
+function CollectorHelper:IsTrackedRecipeProfession(name)
+    if not name then return false end
+    local normalized = strlower(name)
+    return normalized ~= "fishing"
+        and normalized ~= "archaeology"
+        and normalized ~= "archeology"
+end
+
 --- Show or update the Recipe UI frame and profession buttons.
 -- @param doShowFrame boolean Whether to show the recipeFrame if true.
 function CollectorHelper:ShowRecipeUI(doShowFrame)
@@ -30,14 +38,16 @@ function CollectorHelper:ShowRecipeUI(doShowFrame)
                 -- Fetch profession details such as name, icon, and tradeSkillID.
                 local name, iconTexture, _, _, _, _, tradeSkillID = GetProfessionInfo(profIndex)
 
-                if iconTexture then
+                if iconTexture and self:IsTrackedRecipeProfession(name) then
                     -- Update button icon texture and store tradeSkillID and name.
                     button.icon:SetTexture(iconTexture)
+                    button.iconTexture = iconTexture
                     button.tradeSkillID = tradeSkillID
                     button.name = name
                 else
                     -- Use a fallback icon if no icon is available.
                     button.icon:SetTexture(132764) -- fallback icon ID
+                    button.iconTexture = 132764
                     button.tradeSkillID = nil
                     button.name = nil
                 end

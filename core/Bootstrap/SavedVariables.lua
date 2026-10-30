@@ -6,9 +6,12 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 local DEFAULT_SETTINGS = {
     hideMerchantOwned = true,
     showCostFrame = true,
+    showMinimapButton = true,
+    minimapPos = 220,
+    dashboardWidth = 1120,
+    dashboardHeight = 760,
     showHousingFrame = true,
     housingDuplicateCount = 1, -- default buy one
-    autoShowNews = true,
     softCollect = false,
     version = "0"
 }
@@ -23,6 +26,15 @@ function CollectorHelper:InitSettings()
     recipeCollected = recipeCollected or {}
 
     self:initializeSettings()
+    for _, characterData in pairs(recipeCollected) do
+        if type(characterData) == "table" then
+            for professionName in pairs(characterData) do
+                if not self:IsTrackedRecipeProfession(professionName) then
+                    characterData[professionName] = nil
+                end
+            end
+        end
+    end
     self:initializeLfrCollected()
     self:initializeRecipesCollected()
 end
@@ -32,11 +44,20 @@ end
 -- ========================================================================
 --- Ensures default keys exist in `settings`.
 function CollectorHelper:initializeSettings()
+    settings.autoShowNews = nil
+    if settings.minimapPos == nil then
+        settings.minimapPos = tonumber(settings.minimapPosition) or DEFAULT_SETTINGS.minimapPos
+    end
+    settings.minimapPosition = nil
+    settings.hide = settings.showMinimapButton == false
+
     for key, defaultValue in pairs(DEFAULT_SETTINGS) do
         if settings[key] == nil then
             settings[key] = defaultValue
         end
     end
+    settings.version = self.version or settings.version
+    self.db.settings = settings
 end
 
 -- ========================================================================
@@ -74,12 +95,19 @@ end
 --- Initializes recipe collection structure for the current player.
 function CollectorHelper:initializeRecipesCollected()
     C_Timer.After(0.25, function()
-        local profIndices = { GetProfessions() }
+        local prof1, prof2, _, _, cooking, firstAid = GetProfessions()
+        local profIndices = { prof1, prof2, cooking, firstAid }
         local profNames = {}
+        local profIcons = {}
 
-        for _, index in ipairs(profIndices) do
-            local name = index and GetProfessionInfo(index)
-            if name then table.insert(profNames, name) end
+        for _, index in pairs(profIndices) do
+            if index then
+                local name, icon = GetProfessionInfo(index)
+                if self:IsTrackedRecipeProfession(name) then
+                    table.insert(profNames, name)
+                    profIcons[name] = icon
+                end
+            end
         end
 
         local player = self:GetCurrentPlayerID()
@@ -93,9 +121,17 @@ function CollectorHelper:initializeRecipesCollected()
                     collected = 0,
                     recipes = {},
                     lastSync = "never",
-                    total = 0
+                    total = 0,
+                    icon = profIcons[profName],
                 }
+            elseif not recipeCollected[player][profName].icon then
+                recipeCollected[player][profName].icon = profIcons[profName]
             end
+        end
+
+        if self.dashboard then
+            self:RefreshDashboardRecipeJournal()
+            self:RefreshDashboardStats()
         end
 
         if isFirstTime then
@@ -110,6 +146,6 @@ end
 -- Prompt First-Time Recipe Sync
 -- ========================================================================
 function CollectorHelper:PromptFirstTimeSync()
-    self:Print("This character doesn't have any recipe data. You may sync it now if you want. You can reopen the popup with /ch recipe command. It's important to reload after the first sync.")
-    self:ShowRecipeUI(true)
+    self:Print("This character doesn't have any recipe data yet. Open the recipe journal from the dashboard to sync your professions.")
+    self:ToggleDashboard("recipes")
 end

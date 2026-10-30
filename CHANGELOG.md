@@ -1,5 +1,11 @@
 # CollectorHelper
 ## 3.0.0
+- Added a character-based recipe journal inside the collection dashboard.
+- Moved addon preferences into the dashboard and added a configurable minimap button.
+- Added a resizable dashboard with saved dimensions and a refreshed profession journal layout.
+- Replaced the custom minimap button with LibDBIcon and integrated changelog browsing into the dashboard.
+- Excluded Fishing and Archaeology from recipe tracking and fixed profession-sync UI updates.
+- Added a collection dashboard with quick access and preferences.
 - Reorganized addon modules into feature-based folders.
 - Reused scroll-list rows to reduce frame creation during refreshes.
 - Cached item details and bag contents to reduce repeated inventory scans.

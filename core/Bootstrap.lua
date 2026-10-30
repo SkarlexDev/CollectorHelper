@@ -8,9 +8,8 @@ function CollectorHelper:Init()
     self:InitAHUI()             -- Auction House tracker
     self:InitLfrGossip()        -- LFR gossip hooks
     self:InitRecipeUI()         -- Recipe sync frame
-    self:InitNews()             -- News/changelog frame
-
-    self:InitOptionsPanel()     -- Config panel
+    self:InitDashboard()        -- Main collection dashboard
+    self:InitMinimapButton()    -- Optional minimap shortcut
     self:InitAutoSync()         -- Automatic recipe learning handler
 end
 
@@ -36,6 +35,8 @@ function CollectorHelper:OnNewRecipeLearned(_, recipeID)
     professionData.collected = (professionData.collected or 0) + 1
     professionData.lastSync = date("%Y-%m-%d %H:%M:%S")
 
+    self:RefreshDashboardStats()
+    self:RefreshDashboardRecipeJournal()
     self:ShowRecipeUI(false)
 end
 

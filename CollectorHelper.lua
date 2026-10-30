@@ -9,10 +9,11 @@ local CollectorHelper = LibStub("AceAddon-3.0"):NewAddon("CollectorHelper", "Ace
 -- ============================================================================
 local commands = {
     { cmd = "help",    desc = "- Displays this help or command list." },
-    { cmd = "options", desc = "- Opens config panel." },
+    { cmd = "panel",   desc = "- Opens the collection dashboard (default)." },
+    { cmd = "options", desc = "- Opens dashboard preferences." },
     { cmd = "ah",      desc = "- Shows auction house shop list." },
-    { cmd = "recipe",  desc = "- Shows recipe frame for sync." },
-    { cmd = "news",    desc = "- Shows news/changelog frame." },
+    { cmd = "recipe",  desc = "- Opens the character-based recipe journal." },
+    { cmd = "news",    desc = "- Opens the dashboard changelog." },
 }
 
 -- ============================================================================
@@ -52,16 +53,18 @@ end
 function CollectorHelper:HandleChatCommand(input)
     local command = strlower(strtrim(strsplit(" ", input or "", 2)))
 
-    if command == "" or command == "help" then
+    if command == "" or command == "panel" or command == "dashboard" then
+        self:ToggleDashboard()
+    elseif command == "help" then
         self:ShowHelpCmd()
     elseif command == "ah" then
         self.ahFrame:Show()
     elseif command == "recipe" then
-        self:ShowRecipeUI(true)
+        self:ToggleDashboard("recipes")
     elseif command == "news" then
-        self:ShowNews()
+        self:ToggleDashboard("news")
     elseif command == "options" then
-        Settings.OpenToCategory(self.MainPanel)
+        self:ToggleDashboard("settings")
     else
         self:Print("Unknown command: " .. command)
         self:ShowHelpCmd()
@@ -82,3 +85,6 @@ end
 -- Global Access
 -- ============================================================================
 _G.CollectorHelper = CollectorHelper
+_G.OpenCollectorHelperDashboard = function()
+    CollectorHelper:ToggleDashboard()
+end

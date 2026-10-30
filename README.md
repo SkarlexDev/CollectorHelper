@@ -10,11 +10,16 @@ Retail collection helper for merchants, recipes, transmog, raid-finder progress,
 - `core/Bootstrap/` initializes saved data and settings.
 - `core/Data/` contains collection catalogs and changelog data.
 - `core/Shared/` contains helpers shared by multiple features.
-- `core/Features/` groups merchant, auction house, recipe, LFR, news, and options code.
+- `core/Features/` groups merchant, auction house, recipe, LFR, and dashboard changelog code.
+- `core/Features/Dashboard/` provides the main collection hub, preferences, and minimap button.
+- `core/Features/Recipes/Dashboard.lua` renders the character-based recipe journal inside the dashboard.
+- The minimap launcher uses LibDataBroker and LibDBIcon, following the Plater setup.
 - `core/UI/` contains shared builders and reusable widgets.
-- `Libs/` contains the bundled Ace3 dependencies.
+- `Libs/` contains bundled Ace3, LibDataBroker, and LibDBIcon dependencies.
 
 The TOC targets Retail interface versions `120100` and `120105`. Existing settings and recipe/LFR saved variables remain supported.
+
+Use `/ch` to open the resizable dashboard, `/ch options` for dashboard preferences, `/ch recipe` for the character-based recipe journal, and `/ch news` for the integrated changelog. Dashboard size and minimap-button position are saved. Fishing and Archaeology are excluded from recipe tracking; the merchant recipe controls remain in the merchant UI.
 
 ![4prime![afterlfr](https://github.com/user-attachments/assets/e243a84d-e0a8-465e-87bd-c72a4e146407)
 ](https://github.com/user-attachments/assets/033af33e-b0df-4f81-9e5a-d847e913144f)
