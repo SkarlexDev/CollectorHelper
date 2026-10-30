@@ -1,14 +1,6 @@
 local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 
-local COLORS = {
-    background = { 0.035, 0.045, 0.075, 0.98 },
-    panel = { 0.075, 0.09, 0.13, 0.98 },
-    panelHover = { 0.12, 0.15, 0.20, 1 },
-    accent = { 0.78, 0.58, 0.25, 1 },
-    text = { 0.94, 0.92, 0.85, 1 },
-    muted = { 0.62, 0.67, 0.75, 1 },
-    green = { 0.38, 0.78, 0.53, 1 },
-}
+local COLORS = CollectorHelper.DASHBOARD_COLORS
 
 local PROFESSION_ICONS = {
     Alchemy = 136240,
@@ -42,7 +34,7 @@ local function CreatePanel(parent, width, height)
         insets = { left = 1, right = 1, top = 1, bottom = 1 },
     })
     frame:SetBackdropColor(unpack(COLORS.panel))
-    frame:SetBackdropBorderColor(0.18, 0.21, 0.28, 1)
+    frame:SetBackdropBorderColor(unpack(COLORS.border))
     return frame
 end
 
@@ -56,9 +48,17 @@ local function CreateButton(parent, width, height, text)
         insets = { left = 1, right = 1, top = 1, bottom = 1 },
     })
     button:SetBackdropColor(unpack(COLORS.panelHover))
-    button:SetBackdropBorderColor(0.18, 0.21, 0.28, 1)
+    button:SetBackdropBorderColor(unpack(COLORS.border))
     button.label = CreateLabel(button, text, "GameFontNormal", { "CENTER", button, "CENTER", 0, 0 })
     button.label:SetTextColor(unpack(COLORS.text))
+    button:SetScript("OnEnter", function(widget)
+        widget:SetBackdropColor(unpack(COLORS.panelRaised))
+        widget:SetBackdropBorderColor(unpack(COLORS.accentSoft))
+    end)
+    button:SetScript("OnLeave", function(widget)
+        widget:SetBackdropColor(unpack(COLORS.panelHover))
+        widget:SetBackdropBorderColor(unpack(COLORS.border))
+    end)
     return button
 end
 
@@ -71,21 +71,34 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
         "GameFontHighlight", { "TOPLEFT", title, "BOTTOMLEFT", 0, -7 })
     subtitle:SetTextColor(unpack(COLORS.muted))
 
+    local syncNotice = CreatePanel(parent, 1, 34)
+    syncNotice:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, -50)
+    syncNotice:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, -50)
+    syncNotice:SetHeight(34)
+    syncNotice:SetBackdropColor(unpack(COLORS.panelRaised))
+    local syncNoticeText = CreateLabel(syncNotice,
+        "Recipes synced with the merchant on 12.09.2025. Some recipes may still appear on the merchant until the next sync. (Author)",
+        "GameFontHighlightSmall", { "LEFT", syncNotice, "LEFT", 12, 0 })
+    syncNoticeText:SetPoint("RIGHT", syncNotice, "RIGHT", -12, 0)
+    syncNoticeText:SetJustifyH("LEFT")
+    syncNoticeText:SetWordWrap(true)
+
     local characterHeader = CreateLabel(parent, "CHARACTERS", "GameFontNormal",
-        { "TOPLEFT", parent, "TOPLEFT", 0, -58 })
+        { "TOPLEFT", parent, "TOPLEFT", 0, -96 })
     characterHeader:SetTextColor(unpack(COLORS.accent))
 
-    local characterScroll = CreateFrame("ScrollFrame", nil, parent, "UIPanelScrollFrameTemplate")
-    characterScroll:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, -80)
+    local characterScroll = CreateFrame("ScrollFrame", nil, parent)
+    characterScroll:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, -118)
     characterScroll:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", 0, 0)
     characterScroll:SetWidth(184)
 
     local characterContent = CreateFrame("Frame", nil, characterScroll)
     characterContent:SetSize(164, 1)
     characterScroll:SetScrollChild(characterContent)
+    self:CreateModernScrollBar(characterScroll)
 
     local details = CreateFrame("Frame", nil, parent)
-    details:SetPoint("TOPLEFT", parent, "TOPLEFT", 196, -58)
+    details:SetPoint("TOPLEFT", parent, "TOPLEFT", 196, -96)
     details:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -8, 0)
 
     local selectedCharacter
@@ -107,12 +120,26 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
 
     local deleteButton = CreateButton(details, 108, 28, "Delete data")
     deleteButton:SetPoint("TOPRIGHT", details, "TOPRIGHT", 0, 2)
+    deleteButton.label:SetFontObject("GameFontHighlightSmall")
+    deleteButton.label:SetTextColor(1, 0.58, 0.52)
+    deleteButton:SetBackdropColor(unpack(COLORS.panel))
+    deleteButton:SetScript("OnEnter", function(widget)
+        widget:SetBackdropColor(0.25, 0.10, 0.12, 1)
+        widget:SetBackdropBorderColor(0.78, 0.29, 0.30, 1)
+        widget.label:SetTextColor(1, 0.76, 0.72)
+    end)
+    deleteButton:SetScript("OnLeave", function(widget)
+        widget:SetBackdropColor(unpack(COLORS.panel))
+        widget:SetBackdropBorderColor(unpack(COLORS.border))
+        widget.label:SetTextColor(1, 0.58, 0.52)
+    end)
     deleteButton:SetScript("OnClick", function()
         if selectedCharacter then
             StaticPopup_Show("COLLECTORHELPER_DELETE_RECIPE_DATA", selectedCharacter, nil, selectedCharacter)
         end
     end)
 
+    -- Reuse character buttons and size them to wrapped names to avoid truncation.
     local function RefreshCharacters()
         local names = {}
         for characterName in pairs(recipeCollected or {}) do
@@ -139,6 +166,17 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
                 button.label:SetWidth(buttonWidth - 18)
                 button.label:SetJustifyH("LEFT")
                 button.label:SetWordWrap(true)
+                button:SetScript("OnEnter", function(widget)
+                    widget:SetBackdropColor(unpack(COLORS.panelRaised))
+                    widget:SetBackdropBorderColor(unpack(COLORS.accentSoft))
+                    widget.label:SetTextColor(unpack(COLORS.accent))
+                end)
+                button:SetScript("OnLeave", function(widget)
+                    local selected = widget.characterName == selectedCharacter
+                    widget:SetBackdropColor(unpack(selected and COLORS.panelHover or COLORS.panel))
+                    widget:SetBackdropBorderColor(unpack(selected and COLORS.accent or COLORS.border))
+                    widget.label:SetTextColor(unpack(selected and COLORS.text or COLORS.muted))
+                end)
                 button:SetScript("OnClick", function(widget)
                     selectedCharacter = widget.characterName
                     self:RefreshDashboardRecipeJournal()
@@ -149,12 +187,13 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
             button:SetWidth(buttonWidth)
             button.label:SetWidth(buttonWidth - 18)
             button.label:SetText(characterName)
+            button.label:SetTextColor(unpack(characterName == selectedCharacter and COLORS.text or COLORS.muted))
             local buttonHeight = math.max(36, button.label:GetStringHeight() + 12)
             button:SetHeight(buttonHeight)
             button:ClearAllPoints()
             button:SetPoint("TOPLEFT", characterContent, "TOPLEFT", 0, -yOffset)
             button:SetBackdropColor(unpack(characterName == selectedCharacter and COLORS.panelHover or COLORS.panel))
-            button:SetBackdropBorderColor(unpack(characterName == selectedCharacter and COLORS.accent or COLORS.background))
+            button:SetBackdropBorderColor(unpack(characterName == selectedCharacter and COLORS.accent or COLORS.border))
             button:Show()
             yOffset = yOffset + buttonHeight + 6
         end
@@ -163,6 +202,8 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
             characterButtons[index]:Hide()
         end
         characterContent:SetHeight(math.max(yOffset - 6, 1))
+        characterScroll:UpdateScrollChildRect()
+        characterScroll.UpdateModernScrollBar()
         if #names == 0 then
             selectedCharacter = nil
         end
@@ -214,10 +255,25 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
         tile.progressBar:SetPoint("BOTTOMLEFT", tile, "BOTTOMLEFT", 76, 10)
         tile.progressBar.background = tile.progressBar:CreateTexture(nil, "BACKGROUND")
         tile.progressBar.background:SetAllPoints()
-        tile.progressBar.background:SetColorTexture(0.18, 0.21, 0.28, 1)
+        tile.progressBar.background:SetColorTexture(unpack(COLORS.border))
 
         tile.sync = CreateButton(tile, 84, 28, "Sync")
         tile.sync:SetPoint("RIGHT", tile, "RIGHT", -14, 0)
+        tile.sync:SetScript("OnEnter", function(button)
+            if button.syncing then return end
+            button:SetBackdropColor(unpack(COLORS.accentSoft))
+            button:SetBackdropBorderColor(unpack(COLORS.accent))
+            button.label:SetTextColor(unpack(COLORS.text))
+        end)
+        tile.sync:SetScript("OnLeave", function(button)
+            if button.syncing and button.label:GetText() == "Synced" then
+                button:SetBackdropColor(unpack(COLORS.green))
+                return
+            end
+            button:SetBackdropColor(unpack(COLORS.panelHover))
+            button:SetBackdropBorderColor(unpack(COLORS.border))
+            button.label:SetTextColor(unpack(COLORS.text))
+        end)
         tile.sync:SetScript("OnClick", function(button)
             if not button.tradeSkillID or button.syncing then return end
 
@@ -270,7 +326,7 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
                 if characterName == self.player then
                     recipeCollected[characterName] = nil
                     selectedCharacter = characterName
-                    self:initializeRecipesCollected(true)
+                    self:initializeRecipesCollected()
                     return
                 end
 
@@ -288,6 +344,7 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
         }
     end
 
+    -- Render two primary profession slots and one separate Cooking slot.
     function self:RefreshDashboardRecipeJournal()
         RefreshCharacters()
         local characterData = selectedCharacter and recipeCollected[selectedCharacter]
@@ -323,6 +380,7 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
             detailWidth = parent:GetWidth() - 208
         end
         local tileWidth = math.max(detailWidth, 190)
+        -- Keep two primary slots and one cooking slot stable even when a profession is missing.
         local slots = {
             { professionName = primaryNames[1], placeholder = "Empty profession slot", y = -78 },
             { professionName = primaryNames[2], placeholder = "Empty profession slot", y = -178 },
@@ -382,6 +440,13 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
         for index = #slots + 1, #professionTiles do
             professionTiles[index]:Hide()
         end
+    end
+
+    function self:SelectCurrentDashboardRecipeCharacter()
+        if self.player and recipeCollected[self.player] then
+            selectedCharacter = self.player
+        end
+        self:RefreshDashboardRecipeJournal()
     end
 
     self.dashboardRecipeJournal = parent

@@ -6,6 +6,8 @@
 - Replaced the custom minimap button with LibDBIcon and integrated changelog browsing into the dashboard.
 - Excluded Fishing and Archaeology from recipe tracking and fixed profession-sync UI updates.
 - Added a collection dashboard with quick access and preferences.
+- Added an Overview reference for the current `/ch` shortcuts, including their actions and the planned refactoring of their legacy names and organization.
+- `/ch help` lists commands, `/ch` or `/ch panel` opens the dashboard, `/ch dashboard` is an alias, `/ch options` opens Preferences, `/ch ah` opens the auction-house list, `/ch recipe` opens Recipe Journal, and `/ch news` opens the changelog.
 - Reorganized addon modules into feature-based folders.
 - Reused scroll-list rows to reduce frame creation during refreshes.
 - Cached item details and bag contents to reduce repeated inventory scans.

@@ -2,6 +2,7 @@
 	<Script file="core/Shared/Constants.lua"/>
 	<Script file="core/Shared/Formatters.lua"/>
 	<Script file="core/Shared/ItemDetails.lua"/>
+	<Script file="core/Shared/DashboardTheme.lua"/>
 
 	<Script file="core/UI/Builders.lua"/>
 	<Script file="core/UI/Widgets/ScrollableList.lua"/>

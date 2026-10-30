@@ -24,6 +24,7 @@ function CollectorHelper:InitSettings()
     settings = settings or CopyTable(DEFAULT_SETTINGS)
     lfrCollected = lfrCollected or {}
     recipeCollected = recipeCollected or {}
+    mainPanelViewed = mainPanelViewed or {}
 
     self:initializeSettings()
     for _, characterData in pairs(recipeCollected) do
@@ -93,7 +94,7 @@ end
 -- Initialize Recipes Collected Data
 -- ========================================================================
 --- Initializes recipe collection structure for the current player.
-function CollectorHelper:initializeRecipesCollected(suppressFirstTimePrompt)
+function CollectorHelper:initializeRecipesCollected()
     C_Timer.After(0.25, function()
         local prof1, prof2, _, _, cooking = GetProfessions()
         local profIndices = {
@@ -119,7 +120,9 @@ function CollectorHelper:initializeRecipesCollected(suppressFirstTimePrompt)
 
         local player = self:GetCurrentPlayerID()
         self.player = player
-        local isFirstTime = recipeCollected[player] == nil
+        if mainPanelViewed[player] == nil then
+            mainPanelViewed[player] = false
+        end
         recipeCollected[player] = recipeCollected[player] or {}
         local activeProfessions = {}
         for _, profName in ipairs(profNames) do
@@ -155,19 +158,6 @@ function CollectorHelper:initializeRecipesCollected(suppressFirstTimePrompt)
             self:RefreshDashboardRecipeJournal()
             self:RefreshDashboardStats()
         end
-
-        if isFirstTime and not suppressFirstTimePrompt then
-            C_Timer.After(0.50, function()
-                self:PromptFirstTimeSync()
-            end)
-        end
+        self:ShowDashboardForFirstVisit()
     end)
-end
-
--- ========================================================================
--- Prompt First-Time Recipe Sync
--- ========================================================================
-function CollectorHelper:PromptFirstTimeSync()
-    self:Print("This character doesn't have any recipe data yet. Open the recipe journal from the dashboard to sync your professions.")
-    self:ToggleDashboard("recipes")
 end

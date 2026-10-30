@@ -7,9 +7,9 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 --- Represents a changelog entry with version and changes.
 ---@class ChangelogEntry
 ---@field [1] string Version (e.g., "## 2.1.1")
----@field [2] string|string[] Change description(s)
+---@field [2] string First change description; later array entries are additional notes.
 
---- Populates the changelog displayed in the dashboard.
+--- Adds user-facing release notes shown on the dashboard's What's New page.
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
@@ -20,10 +20,16 @@ function CollectorHelper:InitNewsData()
             "- Replaced the custom minimap button with LibDBIcon and integrated changelog browsing into the dashboard.",
             "- Excluded Fishing and Archaeology from recipe tracking and fixed profession-sync UI updates.",
             "- Added a collection dashboard with quick access and preferences.",
+            "- Reorganized the dashboard tabs and refreshed the interface with a compact dark-teal theme.",
+            "- Added modern scrollbars and updated the changelog and recipe journal layouts.",
+            "- Recipe Journal now separates two primary professions from the optional Cooking slot and keeps long character names readable.",
+            "- Added clear hover feedback for characters and recipe actions, including a distinct delete style.",
+            "- Recipe data for a forgotten profession is removed immediately; deleting the current character's data resets learned professions to 0/0.",
             "- Reorganized addon modules into feature-based folders.",
             "- Reused scroll-list rows to reduce frame creation during refreshes.",
             "- Cached item details and bag contents to reduce repeated inventory scans.",
             "- Updated bundled Ace3 libraries to official release r1403, including the WoW 12.1 checkbox fix.",
+            "- Added an Overview reference explaining what the current /ch shortcuts do; their legacy names and organization are planned for refactoring in a future update.",
         },
         {
             "##2.7.0",

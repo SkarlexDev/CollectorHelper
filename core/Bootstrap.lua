@@ -23,7 +23,7 @@ function CollectorHelper:InitAutoSync()
 end
 
 function CollectorHelper:OnSkillLinesChanged()
-    self:initializeRecipesCollected(true)
+    self:initializeRecipesCollected()
 end
 
 function CollectorHelper:OnNewRecipeLearned(_, recipeID)

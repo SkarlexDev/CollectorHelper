@@ -7,13 +7,14 @@ local CollectorHelper = LibStub("AceAddon-3.0"):NewAddon("CollectorHelper", "Ace
 -- ============================================================================
 -- Slash Command Help Table (/ch)
 -- ============================================================================
-local commands = {
-    { cmd = "help",    desc = "- Displays this help or command list." },
-    { cmd = "panel",   desc = "- Opens the collection dashboard (default)." },
-    { cmd = "options", desc = "- Opens dashboard preferences." },
-    { cmd = "ah",      desc = "- Shows auction house shop list." },
-    { cmd = "recipe",  desc = "- Opens the character-based recipe journal." },
-    { cmd = "news",    desc = "- Opens the dashboard changelog." },
+CollectorHelper.SLASH_COMMANDS = {
+    { cmd = "help", desc = "Lists the available /ch commands." },
+    { cmd = "panel", desc = "Opens the main dashboard; this is also the default when you enter /ch without a command." },
+    { cmd = "dashboard", desc = "Alias for /ch panel." },
+    { cmd = "options", desc = "Opens Preferences in the dashboard." },
+    { cmd = "ah", desc = "Opens the tracked auction-house item list." },
+    { cmd = "recipe", desc = "Opens the character-based Recipe Journal." },
+    { cmd = "news", desc = "Opens the dashboard changelog." },
 }
 
 -- ============================================================================
@@ -76,8 +77,8 @@ end
 -- ============================================================================
 function CollectorHelper:ShowHelpCmd()
     self:Print("Available /ch commands:")
-    for _, entry in ipairs(commands) do
-        self:Print(string.format("/ch %s %s", entry.cmd, entry.desc))
+    for _, entry in ipairs(self.SLASH_COMMANDS) do
+        self:Print(string.format("/ch %s - %s", entry.cmd, entry.desc))
     end
 end
 
