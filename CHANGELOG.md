@@ -8,12 +8,12 @@
 - Added a collection dashboard with quick access and preferences.
 - Added an Overview reference for the current `/ch` shortcuts, including their actions and the planned refactoring of their legacy names and organization.
 - `/ch help` lists commands, `/ch` or `/ch panel` opens the dashboard, `/ch dashboard` is an alias, `/ch options` opens Preferences, `/ch ah` opens the auction-house list, `/ch recipe` opens Recipe Journal, and `/ch news` opens the changelog.
-- Consolidated recipe access into the main dashboard; the merchant's **Sync Recipe** shortcut opens Recipe Journal instead of a separate recipe window.
-- Refreshed the merchant helper with the dashboard theme, integrated recipe and panel controls into a dedicated header, and made the cost list adapt to housing controls.
-- Made the merchant panel fully collapsible into a compact tab beside the merchant tabs, separated the housing switch from its label, and removed the persistent Sync Recipes hover state.
-- Refined merchant action buttons to match the dashboard's card styling; recipe sync now uses the normal inactive button border.
-- Widened the merchant helper, removed the redundant currency heading, added hover feedback to currency rows, and clarified the all-collected message.
-- Refined the merchant panel width and title alignment, and made the modern currency-list scrollbar recalculate when merchant content is shown.
+- Consolidated recipe access in the main dashboard; `/ch recipe` opens the journal, with no separate recipe window or merchant recipe shortcut.
+- Refreshed the merchant helper with the dashboard theme, a compact aligned header, and a cost list that adapts to Housing controls.
+- Made the merchant panel collapsible into a compact tab beside the merchant tabs and moved the Housing toggle into the action row.
+- Standardized the four merchant actions with matching icon-card sizes and spacing; narrowed the panel and brought it closer to the merchant frame.
+- Removed the redundant currency heading, added hover feedback to currency rows, and clarified the all-collected message.
+- Virtualized merchant and auction-house lists so only visible rows plus a small buffer need frames; improved scrollbar updates and shared frame utilities.
 - Reorganized addon modules into feature-based folders.
 - Reused scroll-list rows to reduce frame creation during refreshes.
 - Cached item details and bag contents to reduce repeated inventory scans.

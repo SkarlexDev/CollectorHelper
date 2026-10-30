@@ -235,7 +235,7 @@ function CollectorHelper:InitDashboard()
         icon:SetPoint("LEFT", 13, 0)
         icon:SetTexture(iconPath)
 
-        local titleText = CreateLabel(card, title, "GameFontNormal", { "TOPLEFT", icon, "TOPRIGHT", 11, -17 }, COLORS.text)
+        local titleText = CreateLabel(card, title, "GameFontNormal", { "TOPLEFT", icon, "TOPRIGHT", 11, 0 }, COLORS.text)
         titleText:SetWidth(width - 72)
         titleText:SetJustifyH("LEFT")
         local descriptionText = CreateLabel(card, description, "GameFontHighlightSmall",

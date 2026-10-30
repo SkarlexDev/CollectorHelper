@@ -1,10 +1,13 @@
 local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 local COLORS = CollectorHelper.DASHBOARD_COLORS
 
-local PANEL_WIDTH = 390
+local PANEL_WIDTH = 370
 local HEADER_HEIGHT = 56
 local BODY_BOTTOM_GAP_WITH_HOUSING = 134
 local BODY_BOTTOM_GAP = 68
+local ACTION_PANEL_INSET = 12
+local ACTION_CARD_GAP = 4
+local ACTION_CARD_WIDTH = (PANEL_WIDTH - 24 - 2 - ACTION_CARD_GAP * 3) / 4
 
 local function CreateBackdrop(parent, name, width, height, point, color)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
@@ -141,10 +144,10 @@ function CollectorHelper:InitMerchantUI()
         "CollectorHelper_Merchant",
         PANEL_WIDTH,
         1,
-        { "TOPLEFT", merchantFrame, "TOPRIGHT", 8, 0 },
+        { "TOPLEFT", merchantFrame, "TOPRIGHT", 2, 0 },
         COLORS.background
     )
-    self.merchantFrameCost:SetPoint("BOTTOMLEFT", merchantFrame, "BOTTOMRIGHT", 8, 0)
+    self.merchantFrameCost:SetPoint("BOTTOMLEFT", merchantFrame, "BOTTOMRIGHT", 2, 0)
     self.merchantFrameCost:SetFrameLevel(baseLevel + 2)
 
     self.merchantPanelHeader = CreateBackdrop(
@@ -276,14 +279,14 @@ function CollectorHelper:InitMerchantUI()
 
     local actionPanel = CreateFrame("Frame", "CollectorHelper_MerchantActions", self.merchantFrameCost)
     actionPanel:SetSize(PANEL_WIDTH - 24, 44)
-    actionPanel:SetPoint("BOTTOMLEFT", self.merchantFrameCost, "BOTTOMLEFT", 12, 10)
+    actionPanel:SetPoint("BOTTOMLEFT", self.merchantFrameCost, "BOTTOMLEFT", ACTION_PANEL_INSET, 10)
 
     self.buyAllButton = CreateActionCard(
         actionPanel,
         "Collector_MBuyButton",
         "Buy all",
         "Interface\\Icons\\INV_Misc_Coin_01",
-        88,
+        ACTION_CARD_WIDTH,
         COLORS.panel,
         COLORS.green,
         function()
@@ -302,7 +305,7 @@ function CollectorHelper:InitMerchantUI()
         "Collector_MSHButton",
         "Hide owned",
         "Interface\\Icons\\INV_Misc_Bag_10",
-        88,
+        ACTION_CARD_WIDTH,
         COLORS.panelRaised,
         COLORS.accent,
         function()
@@ -314,14 +317,14 @@ function CollectorHelper:InitMerchantUI()
     )
     self.toggleShowOwned.label:SetText(settings.hideMerchantOwned and "Show owned" or "Hide owned")
     self.toggleShowOwned:ClearAllPoints()
-    self.toggleShowOwned:SetPoint("LEFT", self.buyAllButton, "RIGHT", 4, 0)
+    self.toggleShowOwned:SetPoint("LEFT", self.buyAllButton, "RIGHT", ACTION_CARD_GAP, 0)
 
     self.ahTrackButton = CreateActionCard(
         actionPanel,
         "Collector_MAHListButton",
         "AH track",
         "Interface\\Icons\\INV_Misc_Coin_02",
-        88,
+        ACTION_CARD_WIDTH,
         COLORS.panel,
         COLORS.accentSoft,
         function()
@@ -332,14 +335,14 @@ function CollectorHelper:InitMerchantUI()
         end
     )
     self.ahTrackButton:ClearAllPoints()
-    self.ahTrackButton:SetPoint("LEFT", self.toggleShowOwned, "RIGHT", 4, 0)
+    self.ahTrackButton:SetPoint("LEFT", self.toggleShowOwned, "RIGHT", ACTION_CARD_GAP, 0)
 
     self.housingButton = CreateActionCard(
         actionPanel,
         "CollectorHelper_HousingExpand",
         "Housing",
         "housing-dashboard-homestone-icon",
-        88,
+        ACTION_CARD_WIDTH,
         COLORS.panelRaised,
         COLORS.accentSoft,
         function()
@@ -351,7 +354,7 @@ function CollectorHelper:InitMerchantUI()
         true
     )
     self.housingButton:ClearAllPoints()
-    self.housingButton:SetPoint("LEFT", self.ahTrackButton, "RIGHT", 4, 0)
+    self.housingButton:SetPoint("LEFT", self.ahTrackButton, "RIGHT", ACTION_CARD_GAP, 0)
 
     if not settings.showHousingFrame then
         self.housingFrame:Hide()
