@@ -78,14 +78,14 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
     local characterScroll = CreateFrame("ScrollFrame", nil, parent, "UIPanelScrollFrameTemplate")
     characterScroll:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, -80)
     characterScroll:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", 0, 0)
-    characterScroll:SetWidth(168)
+    characterScroll:SetWidth(184)
 
     local characterContent = CreateFrame("Frame", nil, characterScroll)
-    characterContent:SetSize(148, 1)
+    characterContent:SetSize(164, 1)
     characterScroll:SetScrollChild(characterContent)
 
     local details = CreateFrame("Frame", nil, parent)
-    details:SetPoint("TOPLEFT", parent, "TOPLEFT", 204, -58)
+    details:SetPoint("TOPLEFT", parent, "TOPLEFT", 196, -58)
     details:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -8, 0)
 
     local selectedCharacter
@@ -98,6 +98,12 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
     local detailSubtitle = CreateLabel(details, "", "GameFontHighlightSmall",
         { "TOPLEFT", detailTitle, "BOTTOMLEFT", 0, -6 })
     detailSubtitle:SetTextColor(unpack(COLORS.muted))
+    local primaryHeader = CreateLabel(details, "PRIMARY PROFESSIONS", "GameFontNormal",
+        { "TOPLEFT", details, "TOPLEFT", 0, -58 })
+    primaryHeader:SetTextColor(unpack(COLORS.accent))
+    local cookingHeader = CreateLabel(details, "COOKING", "GameFontNormal",
+        { "TOPLEFT", details, "TOPLEFT", 0, -278 })
+    cookingHeader:SetTextColor(unpack(COLORS.accent))
 
     local deleteButton = CreateButton(details, 108, 28, "Delete data")
     deleteButton:SetPoint("TOPRIGHT", details, "TOPRIGHT", 0, 2)
@@ -121,14 +127,18 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
             end
         end
 
+        local buttonWidth = characterContent:GetWidth() - 2
+        local yOffset = 0
         for index, characterName in ipairs(names) do
             local button = characterButtons[index]
             if not button then
-                button = CreateButton(characterContent, 146, 36, "")
+                button = CreateButton(characterContent, buttonWidth, 36, "")
                 characterButtons[index] = button
                 button.label:ClearAllPoints()
                 button.label:SetPoint("LEFT", button, "LEFT", 9, 0)
+                button.label:SetWidth(buttonWidth - 18)
                 button.label:SetJustifyH("LEFT")
+                button.label:SetWordWrap(true)
                 button:SetScript("OnClick", function(widget)
                     selectedCharacter = widget.characterName
                     self:RefreshDashboardRecipeJournal()
@@ -136,54 +146,78 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
             end
 
             button.characterName = characterName
-            button:ClearAllPoints()
-            button:SetPoint("TOPLEFT", characterContent, "TOPLEFT", 0, -(index - 1) * 42)
+            button:SetWidth(buttonWidth)
+            button.label:SetWidth(buttonWidth - 18)
             button.label:SetText(characterName)
+            local buttonHeight = math.max(36, button.label:GetStringHeight() + 12)
+            button:SetHeight(buttonHeight)
+            button:ClearAllPoints()
+            button:SetPoint("TOPLEFT", characterContent, "TOPLEFT", 0, -yOffset)
             button:SetBackdropColor(unpack(characterName == selectedCharacter and COLORS.panelHover or COLORS.panel))
             button:SetBackdropBorderColor(unpack(characterName == selectedCharacter and COLORS.accent or COLORS.background))
             button:Show()
+            yOffset = yOffset + buttonHeight + 6
         end
 
         for index = #names + 1, #characterButtons do
             characterButtons[index]:Hide()
         end
-        characterContent:SetHeight(math.max(#names * 42, 1))
+        characterContent:SetHeight(math.max(yOffset - 6, 1))
         if #names == 0 then
             selectedCharacter = nil
         end
     end
 
     local function GetCurrentProfessions()
-        local first, second, _, _, cooking, firstAid = GetProfessions()
+        local first, second, _, _, cooking = GetProfessions()
         local professions = {}
-        local function AddProfession(professionIndex)
+        local function AddProfession(professionIndex, category)
             if not professionIndex then return end
             local name, icon, _, _, _, _, tradeSkillID = GetProfessionInfo(professionIndex)
             if name then
                 PROFESSION_ICONS[name] = icon
-                professions[name] = { icon = icon, tradeSkillID = tradeSkillID }
+                professions[name] = {
+                    icon = icon,
+                    tradeSkillID = tradeSkillID,
+                    category = category,
+                }
             end
         end
-        AddProfession(first)
-        AddProfession(second)
-        AddProfession(cooking)
-        AddProfession(firstAid)
+        AddProfession(first, "primary")
+        AddProfession(second, "primary")
+        AddProfession(cooking, "cooking")
         return professions
     end
 
     local function CreateProfessionTile()
-        local tile = CreatePanel(details, 1, 112)
+        local tile = CreatePanel(details, 1, 92)
         tile.icon = tile:CreateTexture(nil, "ARTWORK")
-        tile.icon:SetSize(42, 42)
-        tile.icon:SetPoint("TOPLEFT", tile, "TOPLEFT", 14, -16)
+        tile.icon:SetSize(48, 48)
+        tile.icon:SetPoint("BOTTOMLEFT", tile, "BOTTOMLEFT", 14, 14)
 
-        tile.name = CreateLabel(tile, "", "GameFontNormal", { "TOPLEFT", tile, "TOPLEFT", 68, -20 })
+        tile.name = CreateLabel(tile, "", "GameFontNormal", { "TOPLEFT", tile, "TOPLEFT", 76, -12 })
         tile.name:SetTextColor(unpack(COLORS.text))
-        tile.progress = CreateLabel(tile, "", "GameFontHighlightSmall", { "TOPLEFT", tile, "TOPLEFT", 68, -44 })
+        tile.progress = CreateLabel(tile, "", "GameFontNormal", { "TOPLEFT", tile, "TOPLEFT", 76, -34 })
         tile.progress:SetTextColor(unpack(COLORS.muted))
+        tile.progress:SetJustifyH("LEFT")
+        tile.lastSync = CreateLabel(tile, "", "GameFontHighlightSmall",
+            { "TOPLEFT", tile, "TOPLEFT", 76, -56 })
+        tile.lastSync:SetTextColor(unpack(COLORS.muted))
+        tile.lastSync:SetJustifyH("LEFT")
+
+        tile.progressBar = CreateFrame("StatusBar", nil, tile)
+        tile.progressBar:SetHeight(4)
+        tile.progressBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
+        tile.progressBar:SetStatusBarColor(unpack(COLORS.accent))
+        tile.progressBar:SetMinMaxValues(0, 1)
+        tile.progressBar:SetValue(0)
+        tile.progressBar:SetPoint("BOTTOMLEFT", tile, "BOTTOMLEFT", 76, 10)
+        tile.progressBar.background = tile.progressBar:CreateTexture(nil, "BACKGROUND")
+        tile.progressBar.background:SetAllPoints()
+        tile.progressBar.background:SetColorTexture(0.18, 0.21, 0.28, 1)
 
         tile.sync = CreateButton(tile, 84, 28, "Sync")
-        tile.sync:SetPoint("BOTTOMRIGHT", tile, "BOTTOMRIGHT", -12, 10)
+        tile.sync:SetPoint("RIGHT", tile, "RIGHT", -14, 0)
         tile.sync:SetScript("OnClick", function(button)
             if not button.tradeSkillID or button.syncing then return end
 
@@ -233,6 +267,13 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
             button1 = YES,
             button2 = NO,
             OnAccept = function(_, characterName)
+                if characterName == self.player then
+                    recipeCollected[characterName] = nil
+                    selectedCharacter = characterName
+                    self:initializeRecipesCollected(true)
+                    return
+                end
+
                 recipeCollected[characterName] = nil
                 if selectedCharacter == characterName then
                     selectedCharacter = nil
@@ -259,44 +300,67 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
             or "Saved profession progress for this character.")
 
         local currentProfessions = isCurrentCharacter and GetCurrentProfessions() or {}
-        local professionNames = {}
+        local primaryNames = {}
+        local cookingName
         for professionName, data in pairs(characterData or {}) do
-            if type(data) == "table" then
-                professionNames[#professionNames + 1] = professionName
+            local currentProfession = currentProfessions[professionName]
+            if type(data) == "table" and (not isCurrentCharacter or currentProfession) then
+                local isCooking = currentProfession and currentProfession.category == "cooking"
+                    or data.isCooking == true
+                    or strlower(professionName) == "cooking"
+                    or data.icon == PROFESSION_ICONS.Cooking
+                if isCooking then
+                    cookingName = professionName
+                else
+                    primaryNames[#primaryNames + 1] = professionName
+                end
             end
         end
-        table.sort(professionNames)
+        table.sort(primaryNames)
 
-        local slotCount = math.max(2, #professionNames)
         local detailWidth = details:GetWidth()
         if detailWidth <= 0 then
-            detailWidth = parent:GetWidth() - 216
+            detailWidth = parent:GetWidth() - 208
         end
-        local tileWidth = math.max(190, math.floor((detailWidth - 12) / 2))
-        for index = 1, slotCount do
+        local tileWidth = math.max(detailWidth, 190)
+        local slots = {
+            { professionName = primaryNames[1], placeholder = "Empty profession slot", y = -78 },
+            { professionName = primaryNames[2], placeholder = "Empty profession slot", y = -178 },
+            { professionName = cookingName, placeholder = "Empty cooking slot", y = -298 },
+        }
+        for index, slot in ipairs(slots) do
             local tile = EnsureProfessionTile(index)
-            local column = (index - 1) % 2
-            local row = math.floor((index - 1) / 2)
-            tile:SetSize(tileWidth, 112)
+            tile:SetSize(tileWidth, 92)
+            local textWidth = math.max(tileWidth - 190, 1)
+            tile.name:SetWidth(textWidth)
+            tile.progress:SetWidth(textWidth)
+            tile.lastSync:SetWidth(textWidth)
+            tile.progressBar:SetWidth(textWidth)
             tile:ClearAllPoints()
-            tile:SetPoint("TOPLEFT", details, "TOPLEFT", column * (tileWidth + 12), -62 - row * 124)
+            tile:SetPoint("TOPLEFT", details, "TOPLEFT", 0, slot.y)
 
-            local professionName = professionNames[index]
+            local professionName = slot.professionName
             local data = professionName and characterData[professionName]
             if data then
                 local currentProfession = currentProfessions[professionName]
+                data.isCooking = (currentProfession and currentProfession.category == "cooking")
+                    or data.isCooking == true
                 tile.name:SetText(professionName)
-                tile.progress:SetText(string.format("%d / %d recipes  |  %s",
-                    tonumber(data.collected) or 0,
-                    tonumber(data.total) or 0,
-                    data.lastSync or "Not synced"))
+                local collected = tonumber(data.collected) or 0
+                local total = tonumber(data.total) or 0
+                tile.progress:SetText(string.format("%d / %d recipes learned", collected, total))
+                tile.lastSync:SetText("Last synced: " .. (data.lastSync or "Not synced"))
+                tile.progressBar:SetMinMaxValues(0, math.max(total, 1))
+                tile.progressBar:SetValue(math.min(collected, total))
                 tile.icon:SetTexture(data.icon or (currentProfession and currentProfession.icon)
                     or PROFESSION_ICONS[professionName] or 134400)
                 tile.placeholder:Hide()
                 tile.placeholderText:Hide()
                 tile.name:Show()
                 tile.progress:Show()
+                tile.lastSync:Show()
                 tile.icon:Show()
+                tile.progressBar:Show()
                 tile.sync.professionName = professionName
                 tile.sync.tradeSkillID = currentProfession and currentProfession.tradeSkillID
                 tile.sync.iconTexture = currentProfession and currentProfession.icon or data.icon
@@ -304,15 +368,18 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
             else
                 tile.name:Hide()
                 tile.progress:Hide()
+                tile.lastSync:Hide()
                 tile.icon:Hide()
+                tile.progressBar:Hide()
                 tile.sync:Hide()
                 tile.placeholder:Show()
+                tile.placeholderText:SetText(slot.placeholder)
                 tile.placeholderText:Show()
             end
             tile:Show()
         end
 
-        for index = slotCount + 1, #professionTiles do
+        for index = #slots + 1, #professionTiles do
             professionTiles[index]:Hide()
         end
     end

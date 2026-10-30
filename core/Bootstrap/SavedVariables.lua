@@ -93,19 +93,26 @@ end
 -- Initialize Recipes Collected Data
 -- ========================================================================
 --- Initializes recipe collection structure for the current player.
-function CollectorHelper:initializeRecipesCollected()
+function CollectorHelper:initializeRecipesCollected(suppressFirstTimePrompt)
     C_Timer.After(0.25, function()
-        local prof1, prof2, _, _, cooking, firstAid = GetProfessions()
-        local profIndices = { prof1, prof2, cooking, firstAid }
+        local prof1, prof2, _, _, cooking = GetProfessions()
+        local profIndices = {
+            { index = prof1, category = "primary" },
+            { index = prof2, category = "primary" },
+            { index = cooking, category = "cooking" },
+        }
         local profNames = {}
         local profIcons = {}
+        local profCategories = {}
 
-        for _, index in pairs(profIndices) do
+        for _, profession in ipairs(profIndices) do
+            local index = profession.index
             if index then
                 local name, icon = GetProfessionInfo(index)
                 if self:IsTrackedRecipeProfession(name) then
                     table.insert(profNames, name)
                     profIcons[name] = icon
+                    profCategories[name] = profession.category
                 end
             end
         end
@@ -114,6 +121,18 @@ function CollectorHelper:initializeRecipesCollected()
         self.player = player
         local isFirstTime = recipeCollected[player] == nil
         recipeCollected[player] = recipeCollected[player] or {}
+        local activeProfessions = {}
+        for _, profName in ipairs(profNames) do
+            activeProfessions[profName] = true
+        end
+
+        for professionName, professionData in pairs(recipeCollected[player]) do
+            if type(professionData) == "table"
+                and self:IsTrackedRecipeProfession(professionName)
+                and not activeProfessions[professionName] then
+                recipeCollected[player][professionName] = nil
+            end
+        end
 
         for _, profName in ipairs(profNames) do
             if not recipeCollected[player][profName] then
@@ -123,9 +142,12 @@ function CollectorHelper:initializeRecipesCollected()
                     lastSync = "never",
                     total = 0,
                     icon = profIcons[profName],
+                    isCooking = profCategories[profName] == "cooking",
                 }
-            elseif not recipeCollected[player][profName].icon then
-                recipeCollected[player][profName].icon = profIcons[profName]
+            else
+                local professionData = recipeCollected[player][profName]
+                professionData.icon = professionData.icon or profIcons[profName]
+                professionData.isCooking = profCategories[profName] == "cooking"
             end
         end
 
@@ -134,7 +156,7 @@ function CollectorHelper:initializeRecipesCollected()
             self:RefreshDashboardStats()
         end
 
-        if isFirstTime then
+        if isFirstTime and not suppressFirstTimePrompt then
             C_Timer.After(0.50, function()
                 self:PromptFirstTimeSync()
             end)

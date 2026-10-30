@@ -18,7 +18,12 @@ end
 -- ============================================================================
 function CollectorHelper:InitAutoSync()
     self:RegisterEvent("NEW_RECIPE_LEARNED", "OnNewRecipeLearned")
+    self:RegisterEvent("SKILL_LINES_CHANGED", "OnSkillLinesChanged")
     self:RegisterEvent("BAG_UPDATE_DELAYED", "InvalidateBagItemCache")
+end
+
+function CollectorHelper:OnSkillLinesChanged()
+    self:initializeRecipesCollected(true)
 end
 
 function CollectorHelper:OnNewRecipeLearned(_, recipeID)

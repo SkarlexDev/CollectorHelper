@@ -26,8 +26,8 @@ function CollectorHelper:InitDashboardNews(parent)
     subtitle:SetTextColor(unpack(COLORS.muted))
 
     local scroll = CreateFrame("ScrollFrame", nil, parent, "UIPanelScrollFrameTemplate")
-    scroll:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, -48)
-    scroll:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -36, 8)
+    scroll:SetPoint("TOPLEFT", parent, "TOPLEFT", 12, -56)
+    scroll:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -45, 50)
 
     local content = CreateFrame("Frame", nil, scroll)
     content:SetSize(1, 1)
