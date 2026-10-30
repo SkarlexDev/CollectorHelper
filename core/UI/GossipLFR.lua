@@ -25,13 +25,26 @@ function CollectorHelper:GossipLfr()
     self.db.lockDownData = {}
     self:GenerateLockDownData()
 
-    local info = UnitGUID("target")
-    if not info then return end
+    local children = { GossipFrame.GreetingPanel.ScrollBox.ScrollTarget:GetChildren() }
+    local lfrNpc
+    local bestMatchCount = 0
 
-    local _, _, _, _, _, npc_id, _ = strsplit("-", info)
-    local lfrNpc = self.db.gossipData[npc_id]
+    for _, candidate in pairs(self.db.gossipData) do
+        local matchCount = 0
+        for _, child in ipairs(children) do
+            local data = child.GetData and child:GetData()
+            local optionID = data and data.info and data.info.gossipOptionID
+            if optionID and candidate[optionID] then
+                matchCount = matchCount + 1
+            end
+        end
+        if matchCount > bestMatchCount then
+            lfrNpc = candidate
+            bestMatchCount = matchCount
+        end
+    end
+
     if not lfrNpc then
-        local children = { GossipFrame.GreetingPanel.ScrollBox.ScrollTarget:GetChildren() }
         for _, child in ipairs(children) do
             if child.CH then
                 child.CH:Hide()
