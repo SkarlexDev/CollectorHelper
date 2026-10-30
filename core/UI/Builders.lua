@@ -1,12 +1,25 @@
 local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 
 function CollectorHelper:ConfigureFrame(obj, params)
-    if params.width then obj:SetWidth(params.width) end
-    if params.height then obj:SetHeight(params.height) end
+    if params.width ~= nil then obj:SetWidth(params.width) end
+    if params.height ~= nil then obj:SetHeight(params.height) end
+
+    obj:ClearAllPoints()
+    if params.points then
+        for _, point in ipairs(params.points) do
+            obj:SetPoint(unpack(point))
+        end
+        return
+    end
 
     local point = params.point
     if point then
-        obj:SetPoint(point.pos or "CENTER", point.x or 0, point.y or 0)
+        local position = point.pos or "CENTER"
+        if point.relativeTo then
+            obj:SetPoint(position, point.relativeTo, point.relativePoint or position, point.x or 0, point.y or 0)
+        else
+            obj:SetPoint(position, point.x or 0, point.y or 0)
+        end
     else
         obj:SetPoint("CENTER", 0, 0)
     end

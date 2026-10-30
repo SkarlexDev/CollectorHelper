@@ -32,6 +32,8 @@ function CollectorHelper:CreateModernScrollBar(scrollFrame)
     slider:SetPoint("TOPLEFT", track, "TOPLEFT", 2, 0)
     slider:SetPoint("BOTTOMRIGHT", track, "BOTTOMRIGHT", -2, 0)
     slider:SetMinMaxValues(0, 0)
+    slider:SetValueStep(1)
+    slider:SetObeyStepOnDrag(true)
     slider:SetValue(0)
     slider:SetThumbTexture("Interface\\Buttons\\WHITE8x8")
 
@@ -39,6 +41,8 @@ function CollectorHelper:CreateModernScrollBar(scrollFrame)
     thumb:SetSize(8, 28)
     thumb:SetColorTexture(unpack(self.DASHBOARD_COLORS.accentSoft))
 
+    local synchronizing = false
+    local updatePending = false
     local function Update()
         local range = scrollFrame:GetVerticalScrollRange()
         local viewportHeight = math.max(scrollFrame:GetHeight(), 1)
@@ -50,12 +54,29 @@ function CollectorHelper:CreateModernScrollBar(scrollFrame)
         thumb:SetHeight(thumbHeight)
         slider:SetShown(range > 0)
         track:SetShown(range > 0)
-        -- Slider value follows the ScrollFrame offset: zero at the top, max at the bottom.
+        local scrollOffset = math.min(scrollFrame:GetVerticalScroll(), range)
+        if scrollOffset ~= scrollFrame:GetVerticalScroll() then
+            scrollFrame:SetVerticalScroll(scrollOffset)
+        end
+
+        synchronizing = true
         slider:SetValue(scrollFrame:GetVerticalScroll())
+        synchronizing = false
+    end
+
+    local function RequestUpdate()
+        if updatePending then return end
+        updatePending = true
+        C_Timer.After(0, function()
+            updatePending = false
+            Update()
+        end)
     end
 
     slider:SetScript("OnValueChanged", function(_, value)
-        scrollFrame:SetVerticalScroll(value)
+        if not synchronizing then
+            scrollFrame:SetVerticalScroll(value)
+        end
     end)
     slider:SetScript("OnEnter", function()
         thumb:SetColorTexture(unpack(self.DASHBOARD_COLORS.accent))
@@ -63,15 +84,16 @@ function CollectorHelper:CreateModernScrollBar(scrollFrame)
     slider:SetScript("OnLeave", function()
         thumb:SetColorTexture(unpack(self.DASHBOARD_COLORS.accentSoft))
     end)
-    scrollFrame:SetScript("OnMouseWheel", function(_, delta)
+    scrollFrame:HookScript("OnMouseWheel", function(_, delta)
         local range = scrollFrame:GetVerticalScrollRange()
         slider:SetValue(math.max(0, math.min(range,
             scrollFrame:GetVerticalScroll() - delta * 42)))
     end)
-    scrollFrame:HookScript("OnSizeChanged", Update)
-    scrollFrame:HookScript("OnVerticalScroll", Update)
-    scrollFrame:HookScript("OnShow", Update)
+    scrollFrame:HookScript("OnSizeChanged", RequestUpdate)
+    scrollFrame:HookScript("OnVerticalScroll", RequestUpdate)
+    scrollFrame:HookScript("OnShow", RequestUpdate)
     scrollFrame.UpdateModernScrollBar = Update
+    scrollFrame.RequestModernScrollBarUpdate = RequestUpdate
     Update()
     return slider
 end
