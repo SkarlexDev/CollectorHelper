@@ -19,7 +19,7 @@ Retail collection helper for merchants, recipes, transmog, raid-finder progress,
 
 The TOC targets Retail interface versions `120100` and `120105`. Existing settings and recipe/LFR saved variables remain supported.
 
-Use `/ch` to open the resizable dashboard, `/ch options` for dashboard preferences, `/ch recipe` for the character-based recipe journal, and `/ch news` for the integrated changelog. Dashboard size and minimap-button position are saved. Fishing and Archaeology are excluded from recipe tracking; the merchant recipe controls remain in the merchant UI.
+Use `/ch` to open the resizable dashboard, `/ch options` for dashboard preferences, `/ch recipe` for the character-based recipe journal, and `/ch news` for the integrated changelog. Dashboard size and minimap-button position are saved. Fishing and Archaeology are excluded from recipe tracking. The merchant's **Sync Recipe** shortcut opens the dashboard journal; there is no separate recipe window.
 
 ![4prime![afterlfr](https://github.com/user-attachments/assets/e243a84d-e0a8-465e-87bd-c72a4e146407)
 ](https://github.com/user-attachments/assets/033af33e-b0df-4f81-9e5a-d847e913144f)

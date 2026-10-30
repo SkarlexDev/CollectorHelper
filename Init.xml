@@ -26,7 +26,6 @@
 	<Script file="core/Features/Merchant/UI.lua"/>
 	<Script file="core/Features/AuctionHouse/UI.lua"/>
 	<Script file="core/Features/LFR/Gossip.lua"/>
-	<Script file="core/Features/Recipes/UI.lua"/>
 	<Script file="core/Features/Dashboard/Window.lua"/>
 	<Script file="core/Features/Dashboard/Minimap.lua"/>
 	<Script file="core/Bootstrap.lua"/>

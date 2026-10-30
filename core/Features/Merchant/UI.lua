@@ -56,18 +56,9 @@ function CollectorHelper:InitMerchantUI()
         point = { pos = "CENTER", x = -11, y = 0 },
     })
 
-    self.innerRecipeFrame = self:FrameBuilder({
-        frameName = "CollectorHelper_MerchantInnerRecipe",
-        parent = self.merchantFrameCost,
-        width = width,
-        height = 102,
-        point = { pos = "TOP", x = 0, y = -307 },
-        bgColorR = 0, bgColorG = 0, bgColorB = 0, bgAlpha = 0.251,
-    })
-
     self.housingButton = self:ButtonBuilder({
         buttonName = "CollectorHelper_HousingExpand",
-        parent = self.innerRecipeFrame,
+        parent = self.merchantFrameCost,
         text = "<->",
         width = 20,
         height = buttonHeight,
@@ -202,7 +193,7 @@ function CollectorHelper:InitMerchantUI()
         height = 25,
         point = { pos = "LEFT", x = 93, y = -28 },
         onClickScript = function()
-            self:ShowRecipeUI(true)
+            self:ToggleDashboard("recipes")
         end,
     })
 end

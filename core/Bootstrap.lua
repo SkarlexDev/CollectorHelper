@@ -7,7 +7,6 @@ function CollectorHelper:Init()
     self:InitMerchant()         -- Merchant frame and logic
     self:InitAHUI()             -- Auction House tracker
     self:InitLfrGossip()        -- LFR gossip hooks
-    self:InitRecipeUI()         -- Recipe sync frame
     self:InitDashboard()        -- Main collection dashboard
     self:InitMinimapButton()    -- Optional minimap shortcut
     self:InitAutoSync()         -- Automatic recipe learning handler
@@ -42,7 +41,6 @@ function CollectorHelper:OnNewRecipeLearned(_, recipeID)
 
     self:RefreshDashboardStats()
     self:RefreshDashboardRecipeJournal()
-    self:ShowRecipeUI(false)
 end
 
 -- ============================================================================
@@ -55,9 +53,6 @@ function CollectorHelper:InitMerchant()
     MerchantNextPageButton:HookScript("OnClick", function() self:UpdateShop() end)
     MerchantPrevPageButton:HookScript("OnClick", function() self:UpdateShop() end)
 
-    MerchantFrame:HookScript("OnShow", function()
-        C_Timer.After(0.25, function() self:ShowRecipeUI(false) end)
-    end)
 end
 
 -- ============================================================================

@@ -30,6 +30,7 @@ function CollectorHelper:InitNewsData()
             "- Cached item details and bag contents to reduce repeated inventory scans.",
             "- Updated bundled Ace3 libraries to official release r1403, including the WoW 12.1 checkbox fix.",
             "- Added an Overview reference explaining what the current /ch shortcuts do; their legacy names and organization are planned for refactoring in a future update.",
+            "- Consolidated Recipe Journal in the main dashboard; the merchant's Sync Recipe shortcut now opens that page instead of a separate recipe window.",
         },
         {
             "##2.7.0",
