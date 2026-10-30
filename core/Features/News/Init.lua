@@ -2,9 +2,9 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 
 function CollectorHelper:InitNews()
     -- Only proceed if version has changed
-    if settings.version == self.db.version then return end
+    if settings.version == self.version then return end
 
-    settings.version = self.db.version
+    settings.version = self.version
 
     if settings.autoShowNews then
         self:ShowNews()

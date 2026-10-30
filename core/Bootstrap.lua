@@ -18,23 +18,25 @@ end
 -- Automatically sync new recipe data when a new recipe is learned
 -- ============================================================================
 function CollectorHelper:InitAutoSync()
-    local frame = CreateFrame("Frame")
-    frame:RegisterEvent("NEW_RECIPE_LEARNED")
+    self:RegisterEvent("NEW_RECIPE_LEARNED", "OnNewRecipeLearned")
+    self:RegisterEvent("BAG_UPDATE_DELAYED", "InvalidateBagItemCache")
+end
 
-    frame:SetScript("OnEvent", function(_, _, recipeID)
-        local info = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
-        if not (info and info.parentProfessionName) then return end
+function CollectorHelper:OnNewRecipeLearned(_, recipeID)
+    local info = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
+    if not (info and info.parentProfessionName) then return end
 
-        local player = self.player
-        local professionData = recipeCollected[player] and recipeCollected[player][info.parentProfessionName]
-        if not professionData then return end
+    local player = self.player
+    local professionData = recipeCollected[player] and recipeCollected[player][info.parentProfessionName]
+    if not professionData then return end
 
-        professionData.recipes[recipeID] = true
-        professionData.collected = (professionData.collected or 0) + 1
-        professionData.lastSync = date("%Y-%m-%d %H:%M:%S")
+    if professionData.recipes[recipeID] then return end
 
-        self:ShowRecipeUI(false)
-    end)
+    professionData.recipes[recipeID] = true
+    professionData.collected = (professionData.collected or 0) + 1
+    professionData.lastSync = date("%Y-%m-%d %H:%M:%S")
+
+    self:ShowRecipeUI(false)
 end
 
 -- ============================================================================

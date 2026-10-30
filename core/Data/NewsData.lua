@@ -13,6 +13,13 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
+            "## 3.0.0",
+            "- Reorganized addon modules into feature-based folders.",
+            "- Reused scroll-list rows to reduce frame creation during refreshes.",
+            "- Cached item details and bag contents to reduce repeated inventory scans.",
+            "- Updated bundled Ace3 libraries to official release r1403, including the WoW 12.1 checkbox fix.",
+        },
+        {
             "##2.7.0",
             "- Game interface update",
             "- Fix housing"

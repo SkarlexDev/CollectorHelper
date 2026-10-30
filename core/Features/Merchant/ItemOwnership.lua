@@ -149,15 +149,31 @@ end
 --- @param itemCheckId number The item ID to look for
 --- @return boolean
 function CollectorHelper:PlayerHasItemInBag(itemCheckId)
+    local itemIDs = self.bagItemIDs
+    if not itemIDs then
+        itemIDs = self:RefreshBagItemCache()
+    end
+
+    return itemIDs[itemCheckId] == true
+end
+
+function CollectorHelper:RefreshBagItemCache()
+    local itemIDs = {}
     for bag = 0, NUM_BAG_SLOTS do
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
             local item = C_Container.GetContainerItemInfo(bag, slot)
-            if item ~= nil and item.itemID == itemCheckId then
-                return true
+            if item and item.itemID then
+                itemIDs[item.itemID] = true
             end
         end
     end
-    return false
+
+    self.bagItemIDs = itemIDs
+    return itemIDs
+end
+
+function CollectorHelper:InvalidateBagItemCache()
+    self.bagItemIDs = nil
 end
 
 -- ============================================================================

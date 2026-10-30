@@ -14,27 +14,30 @@ function CollectorHelper:UpdateShop()
     CollectorHelper:MerchantItemHideHandler()
 
     local function AddCurrency(texture, value, link, isAhItem)
-        if value == 0 then         
+        if value == 0 then
             return
         end
-        if currencyMap[texture] then
-            currencyMap[texture] = currencyMap[texture] + value
-        else
+
+        if currencyMap[texture] == nil then
             currencyMap[texture] = value
+            if link then
+                local currencyInfo = C_CurrencyInfo.GetCurrencyInfoFromLink(link)
+                if currencyInfo then
+                    itemData[texture] = currencyInfo.quantity
+                else
+                    itemData[texture] = C_Item.GetItemCount(link)
+                end
+            else
+                itemData[texture] = GetMoney()
+            end
+        else
+            currencyMap[texture] = currencyMap[texture] + value
         end
+
         if link and currencyLink[texture] == nil then
             currencyLink[texture] = link
         end
-        if link then
-            local ci = C_CurrencyInfo.GetCurrencyInfoFromLink(link)
-            if ci then
-                itemData[texture] = ci.quantity
-            else
-                itemData[texture] = C_Item.GetItemCount(link)
-            end
-        else
-            itemData[texture] = GetMoney()
-        end
+
         if isAhItem then
             currencyMapAH[texture] = currencyMapAH[texture] or link
         end
@@ -47,24 +50,21 @@ function CollectorHelper:UpdateShop()
             local source = CollectorHelper:GetItemDetails(itemId)
             local shopItemState = CollectorHelper:CheckShopID(source)
             if shopItemState == 0 then
-                local itemsSources = 1
                 local data = C_MerchantFrame.GetItemInfo(itemIndex)
                 local price = data and data.price
                 local multiplier = 1
-                if settings and settings.housingDuplicateCount ~= nil then
-                    if settings.housingDuplicateCount > 1 and source~= nil and source.itemType == "Housing" then
-                        local housingInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(source.itemId, true)
-                        if housingInfo then
-                            local numOwned = housingInfo.quantity + housingInfo.numPlaced 
-                            local difSetting = settings.housingDuplicateCount - numOwned
-                            if difSetting >= 0 then
-                                multiplier = difSetting
-                            end
+                if settings.housingDuplicateCount > 1 and source and source.itemType == "Housing" then
+                    local housingInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(source.itemId, true)
+                    if housingInfo then
+                        local numOwned = housingInfo.quantity + housingInfo.numPlaced
+                        local duplicateCount = settings.housingDuplicateCount - numOwned
+                        if duplicateCount >= 0 then
+                            multiplier = duplicateCount
                         end
                     end
                 end
-                
-                if price then                    
+
+                if price then
                     AddCurrency("MoneyCurrency", price * multiplier, nil, false)
                 end
 

@@ -19,11 +19,11 @@ local commands = {
 -- Addon Lifecycle: OnInitialize
 -- ============================================================================
 function CollectorHelper:OnInitialize()
-    self.db = LibStub("AceDB-3.0"):New("CollectorHelperDB", defaults, true)
+    self.db = LibStub("AceDB-3.0"):New("CollectorHelperDB", nil, true)
     self:RegisterChatCommand("ch", "HandleChatCommand")
 
     local version = C_AddOns.GetAddOnMetadata("CollectorHelper", "Version")
-    self.db.version = version
+    self.version = version or "unknown"
 
     self:InitDB()
     self:InitSettings()
@@ -33,7 +33,6 @@ end
 -- Addon Lifecycle: OnEnable
 -- ============================================================================
 function CollectorHelper:OnEnable()
-    -- self:Print("OnEnable fired. Welcome! Version: " .. self.db.version)
     self:Init()
 end
 
@@ -41,7 +40,8 @@ end
 -- Addon Lifecycle: OnDisable
 -- ============================================================================
 function CollectorHelper:OnDisable()
-    -- self:Print("Addon Disabled!")
+    self:UnregisterEvent("NEW_RECIPE_LEARNED")
+    self:UnregisterEvent("BAG_UPDATE_DELAYED")
 end
 
 -- ============================================================================

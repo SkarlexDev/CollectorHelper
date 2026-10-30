@@ -1,4 +1,5 @@
 local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
+local itemDetailsCache = {}
 
 -- ============================================================================
 -- Retrieve item details by ItemID, request data if not loaded yet
@@ -16,12 +17,19 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 -- ============================================================================
 
 function CollectorHelper:GetItemDetails(itemID)
+    local cacheKey = tonumber(itemID) or itemID
+    local cached = itemDetailsCache[cacheKey]
+    if cached then
+        return cached
+    end
+
     C_Item.RequestLoadItemDataByID(itemID)
     local name, link, quality, _, _, itemType, itemSubType, _, equipLoc, _, _, _, _, bindType = C_Item.GetItemInfo(itemID)
     if name == nil then
         return nil
     end
-    return {
+
+    local details = {
         itemId = itemID,
         name = name,
         link = link,
@@ -31,4 +39,6 @@ function CollectorHelper:GetItemDetails(itemID)
         bindType = bindType,
         itemQuality = quality
     }
+    itemDetailsCache[cacheKey] = details
+    return details
 end

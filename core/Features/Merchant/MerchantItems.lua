@@ -11,8 +11,31 @@ function CollectorHelper:MerchantItemHideHandler()
 
     -- Determine if ElvUI SLE merchant frame is in use
     local isSLE = _G["SLE_ListMerchantFrame"] ~= nil
+    local sleButtonsByItemID
     if isSLE then
         size = GetMerchantNumItems() or 1
+        sleButtonsByItemID = {}
+        for buttonIndex = 1, 10 do
+            local button = _G["SLE_ListMerchantFrame_Button" .. buttonIndex]
+            local itemID = button and button.link and C_Item.GetItemInfoInstant(button.link)
+            if itemID then
+                local buttons = sleButtonsByItemID[itemID]
+                if not buttons then
+                    buttons = {}
+                    sleButtonsByItemID[itemID] = buttons
+                end
+                buttons[#buttons + 1] = button
+            end
+        end
+    end
+
+    local function SetSLEItemShown(itemID, shown)
+        local buttons = sleButtonsByItemID[itemID]
+        if buttons then
+            for _, button in ipairs(buttons) do
+                button:SetShown(shown)
+            end
+        end
     end
 
     -- Hook SLE merchant interface if not already done
@@ -53,17 +76,7 @@ function CollectorHelper:MerchantItemHideHandler()
                         _G["MerchantItem" .. i .. "AltCurrencyFrame"]:Hide()
                         _G["MerchantItem" .. i .. "MoneyFrame"]:Hide()
                     else
-                        -- SLE interface — hide matching buttons by comparing item IDs
-                        for jk = 1, 10 do
-                            local sleBtn = _G["SLE_ListMerchantFrame_Button" .. jk]
-                            if sleBtn and sleBtn.link then
-                                C_Item.RequestLoadItemDataByID(sleBtn.link)
-                                local itId = C_Item.GetItemInfoInstant(sleBtn.link)
-                                if itId == itemId then
-                                    sleBtn:Hide()
-                                end
-                            end
-                        end
+                        SetSLEItemShown(itemId, false)
                     end
                 elseif self.forceShowMerchant then
                     -- Force show merchant item even if owned
@@ -78,16 +91,7 @@ function CollectorHelper:MerchantItemHideHandler()
                             _G["MerchantItem" .. i .. "AltCurrencyFrame"]:Show()
                         end
                     else
-                        for jk = 1, 10 do
-                            local sleBtn = _G["SLE_ListMerchantFrame_Button" .. jk]
-                            if sleBtn and sleBtn.link then
-                                C_Item.RequestLoadItemDataByID(sleBtn.link)
-                                local itId = C_Item.GetItemInfoInstant(sleBtn.link)
-                                if itId == itemId then
-                                    sleBtn:Show()
-                                end
-                            end
-                        end
+                        SetSLEItemShown(itemId, true)
                     end
                 end
 
@@ -111,17 +115,7 @@ function CollectorHelper:MerchantItemHideHandler()
                         eqBtn:Show()
                     end
                 else
-                    -- Update SLE buttons visibility for bag item
-                    for jk = 1, 10 do
-                        local sleBtn = _G["SLE_ListMerchantFrame_Button" .. jk]
-                        if sleBtn and sleBtn.link then
-                            C_Item.RequestLoadItemDataByID(sleBtn.link)
-                            local itId = C_Item.GetItemInfoInstant(sleBtn.link)
-                            if itId == itemId then
-                                sleBtn:Show()
-                            end
-                        end
-                    end
+                    SetSLEItemShown(itemId, true)
                 end
             end
         end

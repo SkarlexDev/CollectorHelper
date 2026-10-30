@@ -1,4 +1,21 @@
 
+# CollectorHelper
+
+Retail collection helper for merchants, recipes, transmog, raid-finder progress, and auction-house shopping lists.
+
+## Code layout
+
+- `CollectorHelper.lua` owns addon lifecycle and slash commands.
+- `Init.xml` defines the ordered module load.
+- `core/Bootstrap/` initializes saved data and settings.
+- `core/Data/` contains collection catalogs and changelog data.
+- `core/Shared/` contains helpers shared by multiple features.
+- `core/Features/` groups merchant, auction house, recipe, LFR, news, and options code.
+- `core/UI/` contains shared builders and reusable widgets.
+- `Libs/` contains the bundled Ace3 dependencies.
+
+The TOC targets Retail interface versions `120100` and `120105`. Existing settings and recipe/LFR saved variables remain supported.
+
 ![4prime![afterlfr](https://github.com/user-attachments/assets/e243a84d-e0a8-465e-87bd-c72a4e146407)
 ](https://github.com/user-attachments/assets/033af33e-b0df-4f81-9e5a-d847e913144f)
 ![3prime](https://github.com/user-attachments/assets/98ae5f58-5ec4-4f5b-99cd-6c69d4ff8208)

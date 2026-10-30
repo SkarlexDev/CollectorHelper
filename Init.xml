@@ -1,31 +1,34 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<Script file="Core/classes/Global.lua"/>
+	<Script file="core/Shared/Constants.lua"/>
+	<Script file="core/Shared/Formatters.lua"/>
+	<Script file="core/Shared/ItemDetails.lua"/>
 
-	<Script file="Core/functions/UIBuilders.lua"/>
-	<Script file="Core/functions/Formatters.lua"/>
-	<Script file="Core/functions/ItemDetails.lua"/>
-	<Script file="Core/functions/RecipeShow.lua"/>
-	<Script file="Core/functions/ShowNews.lua"/>
-	<Script file="Core/functions/UpdateShop.lua"/>
+	<Script file="core/UI/Builders.lua"/>
+	<Script file="core/UI/Widgets/ScrollableList.lua"/>
 
-	<Script file="Core/functions/merchant/AdaptElvUISLE.lua"/>
-	<Script file="Core/functions/merchant/MerchantEquipHandler.lua"/>
-	<Script file="Core/functions/merchant/ItemOwnedHelper.lua"/>
-	<Script file="Core/functions/merchant/SourceItemHelper.lua"/>
-	<Script file="Core/functions/merchant/MerchantItemHideHandler.lua"/>	
-	
-	<Script file="Core/DB/Data.lua"/>
-	<Script file="Core/DB/NewsData.lua"/>
-	<Script file="Init.lua"/>
+	<Script file="core/Data/CollectionData.lua"/>
+	<Script file="core/Data/NewsData.lua"/>
 
-	<Script file="Core/UI/Init.lua"/>
-	<Script file="Core/UI/MerchantUI.lua"/>
-	<Script file="Core/UI/AhUI.lua"/>
-	<Script file="Core/UI/RecipeUI.lua"/>
-	<Script file="Core/UI/GossipLFR.lua"/>
-	<Script file="Core/UI/NewsUI.lua"/>
+	<Script file="core/Features/Merchant/Transmog.lua"/>
+	<Script file="core/Features/Merchant/ItemOwnership.lua"/>
+	<Script file="core/Features/Merchant/ElvUISLE.lua"/>
+	<Script file="core/Features/Merchant/ItemActions.lua"/>
+	<Script file="core/Features/Merchant/MerchantItems.lua"/>
+	<Script file="core/Features/Merchant/ShopCalculator.lua"/>
 
-	<Script file="Core/UI/OptionsPanel/OptionsPanel.lua"/>
-	<Script file="Core/UI/OptionsPanel/Panels/MainPanelUI.lua"/>
-	<Script file="Core/UI/OptionsPanel/Panels/CreateRecipeOptions.lua"/>
+	<Script file="core/Features/Recipes/Helpers.lua"/>
+	<Script file="core/Features/News/Window.lua"/>
+
+	<Script file="core/Bootstrap/SavedVariables.lua"/>
+
+	<Script file="core/Features/Merchant/UI.lua"/>
+	<Script file="core/Features/AuctionHouse/UI.lua"/>
+	<Script file="core/Features/LFR/Gossip.lua"/>
+	<Script file="core/Features/Recipes/UI.lua"/>
+	<Script file="core/Features/News/Init.lua"/>
+
+	<Script file="core/Features/Options/Init.lua"/>
+	<Script file="core/Features/Options/Panels/MainPanel.lua"/>
+	<Script file="core/Features/Options/Panels/Recipes.lua"/>
+	<Script file="core/Bootstrap.lua"/>
 </Ui>
