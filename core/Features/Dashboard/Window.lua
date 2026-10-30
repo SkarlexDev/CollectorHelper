@@ -416,7 +416,7 @@ function CollectorHelper:InitDashboard()
         {
             "showCostFrame",
             "Merchant cost panel",
-            "Shows CollectorHelper's panel beside the merchant: remaining costs for collectibles, recipe sync access, housing controls, and merchant actions. It appears only while a merchant is open and can also be toggled from the merchant window.",
+            "Shows CollectorHelper's themed panel beside the merchant: remaining costs, recipe sync, housing controls, and merchant actions. It appears only while a merchant is open; when collapsed, a small CH tab beside the merchant tabs reopens it.",
         },
         {
             "showMinimapButton",
@@ -468,7 +468,7 @@ function CollectorHelper:InitDashboard()
             self.db.settings = settings
             RefreshToggle()
             if settingKey == "showCostFrame" and self.merchantFrameCost then
-                self.merchantFrameCost:SetShown(settings.showCostFrame)
+                self:SetMerchantPanelShown(settings.showCostFrame)
             end
             if settingKey == "showMinimapButton" then
                 self:UpdateMinimapButtonVisibility()

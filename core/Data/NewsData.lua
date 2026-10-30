@@ -31,6 +31,11 @@ function CollectorHelper:InitNewsData()
             "- Updated bundled Ace3 libraries to official release r1403, including the WoW 12.1 checkbox fix.",
             "- Added an Overview reference explaining what the current /ch shortcuts do; their legacy names and organization are planned for refactoring in a future update.",
             "- Consolidated Recipe Journal in the main dashboard; the merchant's Sync Recipe shortcut now opens that page instead of a separate recipe window.",
+            "- Refreshed the merchant helper with the dashboard theme and moved its controls into a dedicated, aligned header.",
+            "- The merchant panel now collapses into a compact tab beside the merchant tabs; housing controls no longer overlap and Sync Recipes no longer uses a persistent hover state.",
+            "- Updated merchant action buttons to use a unified, icon-led bar styled after the dashboard, and removed the always-active Sync Recipes border.",
+            "- Widened Merchant Helper, removed the separate currency heading, added currency-row hover feedback, and clarified the completion message.",
+            "- Refined merchant panel width and title alignment; the modern currency scrollbar now recalculates when content is shown.",
         },
         {
             "##2.7.0",

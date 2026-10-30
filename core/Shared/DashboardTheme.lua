@@ -70,6 +70,7 @@ function CollectorHelper:CreateModernScrollBar(scrollFrame)
     end)
     scrollFrame:HookScript("OnSizeChanged", Update)
     scrollFrame:HookScript("OnVerticalScroll", Update)
+    scrollFrame:HookScript("OnShow", Update)
     scrollFrame.UpdateModernScrollBar = Update
     Update()
     return slider

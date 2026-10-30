@@ -130,14 +130,20 @@ function CollectorHelper:UpdateShop()
     self.doAhTrack = false
 
     if missingItem then
+        self.merchantHasCosts = true
         self.merchantCost:Hide()
+        self.costListPanel:Show()
         self.mainScrollableContent.scrollFrame:Show()
         self.mainScrollableContent.UpdateRows(costTable)
     else
+        self.merchantHasCosts = false
         self.merchantCost:Show()
+        self.merchantCost:SetText("All collected!")
+        self.costListPanel:Hide()
         self.mainScrollableContent.scrollFrame:Hide()
         self.mainScrollableContent.UpdateRows(costTable)
     end
+    self:UpdateMerchantLayout()
 
     local sortedIndices = {}
     for idx in pairs(initialItemIndexMap) do
