@@ -10,6 +10,8 @@ Retail collection helper for merchants, recipes, transmog, raid-finder progress,
 - `core/Bootstrap/` initializes saved data and settings.
 - `core/Data/` contains collection catalogs and changelog data.
 - `core/Shared/` contains helpers shared by multiple features.
+- `core/UI/Widgets/ModernScrollBar.lua` provides the shared themed scrollbar and coalesced range updates.
+- `core/UI/Widgets/ScrollableList.lua` virtualizes rows, reuses visible row frames, and refreshes the scroll-child bounds when data changes.
 - `core/Features/` groups merchant, auction house, recipe, LFR, and dashboard changelog code.
 - `core/Features/Dashboard/` provides the main collection hub, preferences, and minimap button.
 - `core/Features/Recipes/Dashboard.lua` renders the character-based recipe journal inside the dashboard.

@@ -13,11 +13,19 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
+            "## 3.0.1",
+            "- Extracted the themed scrollbar into a reusable widget with a proportional thumb and synchronized mouse-wheel scrolling.",
+            "- Reused the modern themed scrollbar in the auction-house list for consistent scrolling across the addon.",
+            "- Improved virtualized list scroll-bound updates and scrollbar synchronization.",
+            "- Restored hover highlighting and active-page indicators in the dashboard navigation.",
+            "- Added LuaLS metadata for scrollable-list parameters and return values.",
+        },
+        {
             "## 3.0.0",
             "- Added a character-based recipe journal inside the collection dashboard.",
             "- Moved addon preferences into the dashboard and added a configurable minimap button.",
             "- Added a resizable dashboard with saved dimensions and a refreshed profession journal layout.",
-            "- Replaced the custom minimap button with LibDBIcon and integrated changelog browsing into the dashboard.",
+            "- Improved minimap button integration and added changelog browsing to the dashboard.",
             "- Excluded Fishing and Archaeology from recipe tracking and fixed profession-sync UI updates.",
             "- Added a collection dashboard with quick access and preferences.",
             "- Reorganized the dashboard tabs and refreshed the interface with a compact dark-teal theme.",
@@ -28,7 +36,7 @@ function CollectorHelper:InitNewsData()
             "- Reorganized addon modules into feature-based folders.",
             "- Reused scroll-list rows to reduce frame creation during refreshes.",
             "- Cached item details and bag contents to reduce repeated inventory scans.",
-            "- Updated bundled Ace3 libraries to official release r1403, including the WoW 12.1 checkbox fix.",
+            "- Updated bundled libraries, including a checkbox fix for WoW 12.1.",
             "- Added an Overview reference explaining what the current /ch shortcuts do; their legacy names and organization are planned for refactoring in a future update.",
             "- Consolidated Recipe Journal in the main dashboard; /ch recipe opens the journal, with no separate recipe window or merchant recipe shortcut.",
             "- Refreshed the merchant helper with the dashboard theme, a compact aligned header, and a cost list that adapts to Housing controls.",
@@ -229,8 +237,8 @@ function CollectorHelper:InitNewsData()
             "- Changed cost/page to total merchant cost",
             "- Added AH window support for currency items that can be bought from AH",
             "- Command support",
-            "- Support for ElvUI Shadow & Light default merchant view",
-            "- Support for ElvUI Shadow & Light default merchant view as list"
+            "- Added support for additional merchant layouts.",
+            "- Added support for merchant layouts displayed as a list."
         },
         {
             "## V1.3",
@@ -240,8 +248,8 @@ function CollectorHelper:InitNewsData()
         },
         {
             "## V1.2",
-            "- Added ElvUI skin helper",
-            "- Fixed transmog item sources from CanIMogIt solution",
+            "- Added merchant skin compatibility.",
+            "- Fixed transmog item source detection.",
             "- Frame/buttons better handle",
             "- Added BoE vendor items in bag with equip button from merchant item",
             "- Fixed equip button with skip confirmation",

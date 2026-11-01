@@ -34,6 +34,7 @@ function CollectorHelper:InitAHUI()
         height = 320,
         xpos = 25,
         point = { pos = "TOPLEFT", x = 15, y = -37 },
+        modernScrollBar = true,
     })
 
     -- Close button

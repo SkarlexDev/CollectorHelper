@@ -5,6 +5,7 @@
 	<Script file="core/Shared/DashboardTheme.lua"/>
 
 	<Script file="core/UI/Builders.lua"/>
+	<Script file="core/UI/Widgets/ModernScrollBar.lua"/>
 	<Script file="core/UI/Widgets/ScrollableList.lua"/>
 
 	<Script file="core/Data/CollectionData.lua"/>

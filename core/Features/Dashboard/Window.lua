@@ -102,7 +102,8 @@ function CollectorHelper:InitDashboard()
     logo:SetTexture("Interface\\AddOns\\CollectorHelper\\core\\Media\\Textures\\Logo")
 
     CreateLabel(header, "COLLECTOR HELPER", "GameFontNormalLarge", { "TOPLEFT", logo, "TOPRIGHT", 12, -3 }, COLORS.text)
-    CreateLabel(header, "COLLECTION DASHBOARD  |cff54c9bb3.0|r", "GameFontHighlightSmall",
+    CreateLabel(header, ("COLLECTION DASHBOARD  |cff54c9bb%s|r"):format(self.version or "unknown"),
+        "GameFontHighlightSmall",
         { "TOPLEFT", logo, "TOPRIGHT", 12, -26 }, COLORS.muted)
 
     local closeButton = CreateFrame("Button", nil, header, "BackdropTemplate")
@@ -191,11 +192,14 @@ function CollectorHelper:InitDashboard()
 
         button:SetScript("OnEnter", function(widget)
             widget:SetBackdropColor(unpack(COLORS.panelRaised))
+            widget:SetBackdropBorderColor(unpack(COLORS.accent))
+            widget.activeIndicator:Show()
         end)
         button:SetScript("OnLeave", function(widget)
             local active = self.dashboardActivePage == pageID
             local color = active and COLORS.panelHover or COLORS.background
             widget:SetBackdropColor(unpack(color))
+            widget:SetBackdropBorderColor(unpack(active and COLORS.accentSoft or COLORS.border))
             widget.activeIndicator:SetShown(active)
         end)
         button:SetScript("OnClick", function()

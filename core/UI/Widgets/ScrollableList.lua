@@ -1,12 +1,35 @@
 local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 
 local ROW_HEIGHT = 20
-local ROW_SPACING = 22
+local ROW_GAP = 2
+local ROW_SPACING = ROW_HEIGHT + ROW_GAP
 local DEFAULT_ROW_COLOR = { 0.05, 0.05, 0.05, 0.95 }
 local DEFAULT_HOVER_COLOR = { 0.5, 0.5, 0.5, 1 }
 local DEFAULT_BUTTON_COLOR = { 0.102, 0.102, 0.102, 1 }
 local DEFAULT_BORDER_COLOR = { 0, 0, 0, 1 }
 local DEFAULT_ACCENT_COLOR = { 0.5, 0.5, 0.5, 1 }
+
+---@class CollectorHelper.ScrollableContentPoint
+---@field pos string
+---@field x number
+---@field y number
+
+---@class CollectorHelper.ScrollableContentParams
+---@field parent Frame
+---@field point CollectorHelper.ScrollableContentPoint
+---@field width number
+---@field height number
+---@field xwidth? number
+---@field xpos? number
+---@field bgFile? string
+---@field edgeFile? string
+---@field edgeSize? number
+---@field modernScrollBar? boolean
+---@field themeColors? table
+
+---@class CollectorHelper.ScrollableContent
+---@field scrollFrame ScrollFrame
+---@field UpdateRows fun(data: table)
 
 function CollectorHelper:CreateRow(index, item, data, params, scrollChild, updateRows)
     local themeColors = params.themeColors
@@ -170,6 +193,8 @@ function CollectorHelper:CreateRow(index, item, data, params, scrollChild, updat
     return row
 end
 
+---@param params CollectorHelper.ScrollableContentParams
+---@return CollectorHelper.ScrollableContent
 function CollectorHelper:CreateScrollableContent(params)
     assert(type(params) == "table", "CreateScrollableContent expects a parameter table")
     assert(params.parent, "CreateScrollableContent requires a parent frame")
@@ -208,8 +233,9 @@ function CollectorHelper:CreateScrollableContent(params)
 
     local function clampScrollPosition()
         local maxScroll = math.max(0, #currentData * ROW_SPACING - scrollFrame:GetHeight())
-        if scrollFrame:GetVerticalScroll() > maxScroll then
-            scrollFrame:SetVerticalScroll(maxScroll)
+        local scrollOffset = math.max(0, math.min(scrollFrame:GetVerticalScroll(), maxScroll))
+        if scrollFrame:GetVerticalScroll() ~= scrollOffset then
+            scrollFrame:SetVerticalScroll(scrollOffset)
         end
     end
 
@@ -218,8 +244,9 @@ function CollectorHelper:CreateScrollableContent(params)
         if not force and firstIndex == lastFirstIndex then return end
         lastFirstIndex = firstIndex
 
+        local dataCount = #currentData
         local visibleRowCount = math.min(
-            #currentData,
+            dataCount,
             math.ceil(scrollFrame:GetHeight() / ROW_SPACING) + 2
         )
         for slot = 1, visibleRowCount do
@@ -254,6 +281,7 @@ function CollectorHelper:CreateScrollableContent(params)
 
         local contentHeight = #data * ROW_SPACING
         scrollChild:SetHeight(math.max(contentHeight, 1))
+        scrollFrame:UpdateScrollChildRect()
         clampScrollPosition()
 
         lastFirstIndex = nil
