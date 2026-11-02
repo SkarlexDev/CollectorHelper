@@ -13,6 +13,11 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 function CollectorHelper:InitNewsData()
     self.db.news = {
         {
+            "## 3.0.2",
+            "- Added a Support page with a copyable invite link to the CollectorHelper Discord.",
+            "- Added a Discord community badge to the project overview.",
+        },
+        {
             "## 3.0.1",
             "- Extracted the themed scrollbar into a reusable widget with a proportional thumb and synchronized mouse-wheel scrolling.",
             "- Reused the modern themed scrollbar in the auction-house list for consistent scrolling across the addon.",

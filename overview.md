@@ -2,6 +2,8 @@
 
 CollectorHelper helps you track and collect merchant items, recipes, appearances, and raid-finder progress. The main interface is a resizable dashboard with collection tools, a character-based Recipe Journal, preferences, and release notes.
 
+[![Join us on Discord](https://img.shields.io/badge/Discord-Join%20the%20community-5865F2?logo=discord&logoColor=white)](https://discord.gg/bPewYaEgnV)
+
 ## Features
 
 ### Dashboard

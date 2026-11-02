@@ -6,6 +6,29 @@ local MIN_PANEL_WIDTH = 920
 local MIN_PANEL_HEIGHT = 620
 local SIDEBAR_WIDTH = 172
 local COLORS = CollectorHelper.DASHBOARD_COLORS
+local DISCORD_URL = "https://discord.gg/bPewYaEgnV"
+
+StaticPopupDialogs["COLLECTORHELPER_DISCORD_INVITE"] = {
+    text = "Join the CollectorHelper Discord community. Press Ctrl+C to copy the invite link.",
+    button1 = CLOSE,
+    hasEditBox = true,
+    editBoxWidth = 260,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+    preferredIndex = 3,
+    OnShow = function(dialog, url)
+        local editBox = dialog.GetEditBox and dialog:GetEditBox() or dialog.editBox
+        editBox:SetText(url)
+        editBox:SetAutoFocus(true)
+        editBox:HighlightText()
+    end,
+    OnHide = function(dialog)
+        local editBox = dialog.GetEditBox and dialog:GetEditBox() or dialog.editBox
+        editBox:SetText("")
+        editBox:ClearFocus()
+    end,
+}
 
 local NAVIGATION = {
     { id = "overview", label = "Overview", icon = "Interface\\Icons\\INV_Misc_Star_02" },
@@ -13,6 +36,7 @@ local NAVIGATION = {
     { id = "recipes", label = "Recipe journal", icon = "Interface\\Icons\\INV_Misc_Book_09" },
     { id = "settings", label = "Preferences", icon = "Interface\\Icons\\Trade_Engineering" },
     { id = "news", label = "What's new", icon = "Interface\\Icons\\INV_Misc_Note_01" },
+    { id = "support", label = "Support", icon = "Interface\\Icons\\INV_Misc_GroupLooking" },
 }
 
 local function CreateBackdrop(parent, name, width, height, point, color)
@@ -363,6 +387,36 @@ function CollectorHelper:InitDashboard()
     local news = CreatePage("news")
     self:InitDashboardNews(news)
 
+    local support = CreatePage("support")
+    CreateLabel(support, "SUPPORT COLLECTORHELPER", "GameFontNormalLarge",
+        { "TOPLEFT", support, "TOPLEFT", 0, -4 }, COLORS.text)
+    CreateLabel(support, "Have a question, found an issue, or want to share feedback? Join the community on Discord.",
+        "GameFontHighlight", { "TOPLEFT", support, "TOPLEFT", 0, -30 }, COLORS.muted)
+
+    local supportCard = CreateBackdrop(support, nil, contentWidth, 190,
+        { "TOPLEFT", support, "TOPLEFT", 0, -72 }, COLORS.panel)
+    local supportIcon = supportCard:CreateTexture(nil, "ARTWORK")
+    supportIcon:SetSize(48, 48)
+    supportIcon:SetPoint("TOPLEFT", supportCard, "TOPLEFT", 20, -22)
+    supportIcon:SetTexture("Interface\\Icons\\INV_Misc_GroupLooking")
+
+    CreateLabel(supportCard, "Join our Discord", "GameFontNormalLarge",
+        { "TOPLEFT", supportIcon, "TOPRIGHT", 14, -2 }, COLORS.text)
+    local supportDescription = CreateLabel(supportCard,
+        "Get help with the addon, report problems, and talk with other collectors.",
+        "GameFontHighlight", { "TOPLEFT", supportIcon, "BOTTOMLEFT", 0, -18 }, COLORS.muted)
+    supportDescription:SetWidth(contentWidth - 68)
+    supportDescription:SetJustifyH("LEFT")
+
+    local discordButton = CreateFrame("Button", nil, supportCard, "UIPanelButtonTemplate")
+    discordButton:SetSize(160, 34)
+    discordButton:SetPoint("BOTTOMLEFT", supportCard, "BOTTOMLEFT", 20, 18)
+    discordButton:SetText("Join Discord")
+    self:ApplyElvUISkin(discordButton)
+    discordButton:SetScript("OnClick", function()
+        StaticPopup_Show("COLLECTORHELPER_DISCORD_INVITE", nil, nil, DISCORD_URL)
+    end)
+
     local tools = CreatePage("tools")
     CreateLabel(tools, "COLLECTION TOOLS", "GameFontNormalLarge", { "TOPLEFT", tools, "TOPLEFT", 0, -4 }, COLORS.text)
     CreateLabel(tools, "Choose a tool. Your existing collection data stays right where it is.",
@@ -508,6 +562,8 @@ function CollectorHelper:InitDashboard()
         commandPanel:SetWidth(math.max(overviewWidth, 1))
         commandNote:SetWidth(math.max(overviewWidth - 28, 1))
         commandList:SetWidth(math.max(overviewWidth - 28, 1))
+        supportCard:SetWidth(contentWidth)
+        supportDescription:SetWidth(contentWidth - 68)
         local overviewCardWidth = (overviewWidth - 12) / 2
 
         local statWidth = (overviewWidth - 20) / 3
