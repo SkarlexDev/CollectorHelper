@@ -48,17 +48,9 @@ function CollectorHelper:CheckShopID(source)
         if CollectorHelper:PlayerHasItemInBag(source.itemId) == true then
             return 11
         end
-        local recipeId = CollectorHelper:SearchRecipe(source.itemId)
-        if recipeId ~= nil then
-            local player = self.player
-            if player and recipeCollected[player] then
-                local professionData = recipeCollected[player][self.pNameToCheck]
-                if professionData ~= nil then
-                    local pd = professionData["recipes"][recipeId]
-                    return pd ~= nil and pd and 1 or 0
-                end
-                return 0
-            end
+        local known = self:IsRecipeItemKnown(source.itemId)
+        if known ~= nil then
+            return known and 1 or 0
         end
     end
 
@@ -106,38 +98,38 @@ function CollectorHelper:CheckShopID(source)
     end
 end
 
--- ============================================================================
--- RECIPE SEARCH
--- ============================================================================
-
---- Searches for the recipe ID from known professions and stores the profession name to check.
---- @param id number|string The recipe item ID
---- @return number|nil Returns the recipe ID or nil if not found
-function CollectorHelper:SearchRecipe(id)
-    local prof1index, prof2index, _, _, cooking = GetProfessions()
-
-    local prof1 = prof1index and GetProfessionInfo(prof1index) or ""
-    local prof2 = prof2index and GetProfessionInfo(prof2index) or ""
-    local cookingProf = cooking and GetProfessionInfo(cooking) or ""
-
-    local p1 = self.db.recipes[prof1] or {}
-    local p2 = self.db.recipes[prof2] or {}
-    local p3 = self.db.recipes[cookingProf] or {}
-
-    local recipeItemId = tonumber(id)
-
-    if p1[recipeItemId] then
-        self.pNameToCheck = prof1
-        return p1[recipeItemId]
-    elseif p2[recipeItemId] then
-        self.pNameToCheck = prof2
-        return p2[recipeItemId]
-    elseif p3[recipeItemId] then
-        self.pNameToCheck = cookingProf
-        return p3[recipeItemId]
-    else
-        self.pNameToCheck = ""
+--- Returns whether the tooltip identifies a recipe as known or learnable.
+--- Returns nil when the client has not supplied enough tooltip information.
+function CollectorHelper:IsRecipeItemKnown(itemID)
+    if not (C_TooltipInfo and C_TooltipInfo.GetItemByID and Enum and Enum.TooltipDataLineType) then
         return nil
+    end
+
+    local tooltipData = C_TooltipInfo.GetItemByID(itemID)
+    if not (tooltipData and type(tooltipData.lines) == "table") then
+        return nil
+    end
+
+    local lineTypes = Enum.TooltipDataLineType
+    local requirements = Enum.TooltipDataUsageRequirementType or {}
+    local hasLearnLine = false
+
+    for _, line in ipairs(tooltipData.lines) do
+        if (lineTypes.ItemSpellTriggerLearn and line.type == lineTypes.ItemSpellTriggerLearn)
+            or (lineTypes.LearnableSpell and line.type == lineTypes.LearnableSpell) then
+            hasLearnLine = true
+        end
+
+        if (_G.ITEM_SPELL_KNOWN and line.leftText == _G.ITEM_SPELL_KNOWN)
+            or (requirements.NotAlreadyKnown
+                and line.requirementType == requirements.NotAlreadyKnown
+                and line.usable == false) then
+            return true
+        end
+    end
+
+    if hasLearnLine then
+        return false
     end
 end
 

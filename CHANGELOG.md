@@ -1,5 +1,8 @@
 # CollectorHelper
 ## 3.0.2
+- Replaced the static vendor recipe lookup with dynamic tooltip checks for known recipes.
+- Removed an outdated recipe synchronization notice from the Recipe Journal.
+- Corrected the Join Discord button hover colors to match the dashboard theme.
 - Added a Support page with a copyable invite link to the CollectorHelper Discord.
 - Added a Discord community badge to the project overview.
 

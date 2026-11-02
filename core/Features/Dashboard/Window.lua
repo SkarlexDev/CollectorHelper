@@ -408,11 +408,29 @@ function CollectorHelper:InitDashboard()
     supportDescription:SetWidth(contentWidth - 68)
     supportDescription:SetJustifyH("LEFT")
 
-    local discordButton = CreateFrame("Button", nil, supportCard, "UIPanelButtonTemplate")
+    local discordButton = CreateFrame("Button", nil, supportCard, "BackdropTemplate")
     discordButton:SetSize(160, 34)
     discordButton:SetPoint("BOTTOMLEFT", supportCard, "BOTTOMLEFT", 20, 18)
-    discordButton:SetText("Join Discord")
-    self:ApplyElvUISkin(discordButton)
+    discordButton:SetBackdrop({
+        bgFile = "Interface\\Buttons\\WHITE8x8",
+        edgeFile = "Interface\\Buttons\\WHITE8x8",
+        edgeSize = 1,
+        insets = { left = 1, right = 1, top = 1, bottom = 1 },
+    })
+    discordButton:SetBackdropColor(unpack(COLORS.panelRaised))
+    discordButton:SetBackdropBorderColor(unpack(COLORS.border))
+    local discordButtonLabel = CreateLabel(discordButton, "Join Discord", "GameFontNormal",
+        { "CENTER", discordButton, "CENTER", 0, 0 }, COLORS.text)
+    discordButton:SetScript("OnEnter", function(widget)
+        widget:SetBackdropColor(unpack(COLORS.panelHover))
+        widget:SetBackdropBorderColor(unpack(COLORS.accent))
+        discordButtonLabel:SetTextColor(unpack(COLORS.accent))
+    end)
+    discordButton:SetScript("OnLeave", function(widget)
+        widget:SetBackdropColor(unpack(COLORS.panelRaised))
+        widget:SetBackdropBorderColor(unpack(COLORS.border))
+        discordButtonLabel:SetTextColor(unpack(COLORS.text))
+    end)
     discordButton:SetScript("OnClick", function()
         StaticPopup_Show("COLLECTORHELPER_DISCORD_INVITE", nil, nil, DISCORD_URL)
     end)

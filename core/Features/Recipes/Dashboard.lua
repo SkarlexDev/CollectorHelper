@@ -71,24 +71,12 @@ function CollectorHelper:InitDashboardRecipeJournal(parent)
         "GameFontHighlight", { "TOPLEFT", title, "BOTTOMLEFT", 0, -7 })
     subtitle:SetTextColor(unpack(COLORS.muted))
 
-    local syncNotice = CreatePanel(parent, 1, 34)
-    syncNotice:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, -50)
-    syncNotice:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, -50)
-    syncNotice:SetHeight(34)
-    syncNotice:SetBackdropColor(unpack(COLORS.panelRaised))
-    local syncNoticeText = CreateLabel(syncNotice,
-        "Recipes synced with the merchant on 12.09.2025. Some recipes may still appear on the merchant until the next sync. (Author)",
-        "GameFontHighlightSmall", { "LEFT", syncNotice, "LEFT", 12, 0 })
-    syncNoticeText:SetPoint("RIGHT", syncNotice, "RIGHT", -12, 0)
-    syncNoticeText:SetJustifyH("LEFT")
-    syncNoticeText:SetWordWrap(true)
-
     local characterHeader = CreateLabel(parent, "CHARACTERS", "GameFontNormal",
-        { "TOPLEFT", parent, "TOPLEFT", 0, -96 })
+        { "TOPLEFT", parent, "TOPLEFT", 0, -50 })
     characterHeader:SetTextColor(unpack(COLORS.accent))
 
     local characterScroll = CreateFrame("ScrollFrame", nil, parent)
-    characterScroll:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, -118)
+    characterScroll:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, -72)
     characterScroll:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", 0, 0)
     characterScroll:SetWidth(184)
 

@@ -70,23 +70,6 @@ function CollectorHelper:ApplyElvUISkin(button)
     end)
 end
 
-function CollectorHelper:ButtonBuilderInsecure(params)
-    local button = CreateFrame(
-        "Button",
-        params.buttonName,
-        params.parent,
-        "UIPanelButtonTemplate, InsecureActionButtonTemplate"
-    )
-    button:RegisterForClicks("AnyUp", "AnyDown")
-    button:SetAttribute("type", "item")
-
-    self:ConfigureFrame(button, params)
-    button:SetText(params.text or "")
-    self:ApplyElvUISkin(button)
-
-    return button
-end
-
 function CollectorHelper:ButtonBuilder(params)
     local button = CreateFrame("Button", params.buttonName, params.parent, "UIPanelButtonTemplate")
     button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
