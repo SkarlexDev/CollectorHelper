@@ -1,5 +1,10 @@
+package-as: CollectorHelper
+
 manual-changelog:
     filename: CHANGELOG.md
     markup-type: markdown
-enable-toc-creation: false
-release-type: release
+
+ignore:
+    - DEV
+    - README.md
+    - overview.md
