@@ -23,6 +23,8 @@ The TOC targets Retail interface versions `120100` and `120105`. Existing settin
 
 Use `/ch` to open the resizable dashboard, `/ch options` for dashboard preferences, `/ch recipe` for the character-based recipe journal, and `/ch news` for the integrated changelog. Open the dashboard's Support page to join the CollectorHelper Discord. Dashboard size and minimap-button position are saved. Fishing and Archaeology are excluded from recipe tracking. Recipe access is through the dashboard; there is no separate recipe window or merchant recipe shortcut.
 
+At login, CollectorHelper announces its version once to your current party or raid and, if you are in one, your guild. It can detect a newer version when another online member using CollectorHelper announces theirs; guild members do not need to be nearby. With no group or guild, in-game version checking is unavailable. At most one update alert is shown per session. Updates must be installed manually from [CurseForge](https://www.curseforge.com/wow/addons/collectorhelper).
+
 ![4prime![afterlfr](https://github.com/user-attachments/assets/e243a84d-e0a8-465e-87bd-c72a4e146407)
 ](https://github.com/user-attachments/assets/033af33e-b0df-4f81-9e5a-d847e913144f)
 ![3prime](https://github.com/user-attachments/assets/98ae5f58-5ec4-4f5b-99cd-6c69d4ff8208)

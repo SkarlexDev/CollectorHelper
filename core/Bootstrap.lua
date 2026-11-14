@@ -4,6 +4,7 @@ local CollectorHelper = LibStub("AceAddon-3.0"):GetAddon("CollectorHelper")
 -- Entry point: Initializes all CollectorHelper modules
 -- ============================================================================
 function CollectorHelper:Init()
+    self:InitVersionCheck()
     self:InitMerchant()         -- Merchant frame and logic
     self:InitAHUI()             -- Auction House tracker
     self:InitLfrGossip()        -- LFR gossip hooks

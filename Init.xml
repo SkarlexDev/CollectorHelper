@@ -11,6 +11,8 @@
 	<Script file="core/Data/CollectionData.lua"/>
 	<Script file="core/Data/NewsData.lua"/>
 
+	<Script file="core/Features/VersionCheck.lua"/>
+
 	<Script file="core/Features/Merchant/Transmog.lua"/>
 	<Script file="core/Features/Merchant/ItemOwnership.lua"/>
 	<Script file="core/Features/Merchant/ElvUISLE.lua"/>

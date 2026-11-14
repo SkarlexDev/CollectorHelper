@@ -1,4 +1,7 @@
 # CollectorHelper
+## 3.0.3
+- Added one-time version announcements to party, raid, and guild channels, with at most one update alert per session.
+
 ## 3.0.2
 - Replaced the static vendor recipe lookup with dynamic tooltip checks for known recipes.
 - Removed an outdated recipe synchronization notice from the Recipe Journal.

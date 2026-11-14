@@ -45,6 +45,10 @@ Open the character-based journal with `/ch recipe` or from Collection Tools. Sel
 
 When you speak with a supported raid NPC, CollectorHelper adds progress to the relevant wing options in the gossip window. Hover over a wing to see its bosses; available encounter progress and collected-wing status are shown alongside the wing name.
 
+### Version notifications
+
+At login, CollectorHelper announces its version once to your current party or raid and, if you are in one, your guild. It can detect a newer version when another online member using CollectorHelper announces theirs; guild members do not need to be nearby. With no group or guild, in-game version checking is unavailable. At most one update alert is shown per session. Updates must be installed manually from [CurseForge](https://www.curseforge.com/wow/addons/collectorhelper).
+
 ## Getting started
 
 1. Type `/ch` to open the dashboard and explore Collection Tools and Preferences.
